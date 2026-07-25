@@ -4,6 +4,7 @@ import myLogo from "@/assets/logo.svg";
 import facebook from "@/assets/facebook.svg"
 import instagram from "@/assets/instagram.svg"
 import whatsApp from "@/assets/whatsApp.svg"
+import Section from "../layouts/Section.astro";
 
 const links = [
   {
@@ -24,15 +25,17 @@ const links = [
 ];
 ---
 
-<section aria-label="Hero section" class="flex flex-col items-center gap-space-md py-section">
-  <Image src={myLogo} alt="Logo" class="size-icon-xl w-auto" />
-  <ul class="flex justify-center gap-space-xs">
-    {links.map((i) => (
-      <li>
-        <a href={i.href} target="_blank" class="hover:opacity-80 hover:scale-105 block p-1">
-          <Image src={i.icon} alt={i.title} class="size-icon-md w-auto" />
-        </a>
-      </li>
-    ))}
-  </ul>
-</section>
+<Section label="Hero Section">
+  <div class="flex flex-col items-center gap-space-md">
+    <Image src={myLogo} alt="Logo" class="size-icon-xl w-auto" />
+    <ul class="flex justify-center gap-space-xs">
+      {links.map((i) => (
+        <li>
+          <a href={i.href} target="_blank" class="hover:opacity-80 hover:scale-105 block p-1">
+            <Image src={i.icon} alt={i.title} class="size-icon-md w-auto" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>

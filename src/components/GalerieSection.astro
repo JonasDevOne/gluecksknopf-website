@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Carousel from '@/components/Carousel.astro';
+import LinkButton from "./LinkButton.astro";
+import Section from "../layouts/Section.astro";
 
 const allImages = await getCollection('imageCollection');
 
@@ -9,21 +11,10 @@ const carouselItems = allImages
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 ---
 
-<section aria-label="galerie-section" class="py-section">
-  <div class="border-y-2 text-2xl">
-    <div class="max-w-[95vw] mx-auto px-4 my-7">
-      <a href="/galerie" class="inline-block">
-        <h2
-          class="my-5 px-3 py-2 font-bold text-2xl border-2 border-current transition-all duration-200 hover:underline hover:scale-105 hover:translate-x-1 hover:-translate-y-1 hover:shadow-[-6px_6px_0px_0px_currentColor]"
-        >
-          Galerie
-        </h2>
-      </a>
-
-      <Carousel
-        images={carouselItems}
-        class="w-full mb-8 p-5 bg-surface"
-      />
-    </div>
-  </div>
-</section>
+<Section label="Galerie Section" class="max-w-[95vw] mx-auto my-5">
+  <LinkButton link="/galerie">Galerie</LinkButton>
+  <Carousel
+    images={carouselItems}
+    class="w-full p-5 bg-surface"
+  />
+</Section>
