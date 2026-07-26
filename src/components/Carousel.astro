@@ -18,7 +18,7 @@ const duplicatedImages = [...images, ...images];
     aria-label="Vorheriges Bild"
     class="prev-btn absolute left-7 top-1/2 -translate-y-1/2 z-20 origin-center bg-transparent text-white transition-all duration-300 opacity-0 group-hover:opacity-100 cursor-pointer p-2 flex items-center justify-center select-none scale-y-[4] scale-x-[2] hover:scale-y-[4.5] hover:scale-x-[2.5] active:scale-x-300"
   >
-    <span class="text-4xl font-bold inline-flex items-center justify-center select-none leading-none -translate-y-[4px]">
+    <span class="text-4xl font-bold inline-flex items-center justify-center select-none leading-none -translate-y-1">
       &lsaquo;
     </span>
   </button>
@@ -27,23 +27,42 @@ const duplicatedImages = [...images, ...images];
     aria-label="Nächstes Bild"
     class="next-btn absolute right-7 top-1/2 -translate-y-1/2 z-20 origin-center bg-transparent text-white transition-all duration-300 opacity-0 group-hover:opacity-100 cursor-pointer p-2 flex items-center justify-center select-none scale-y-[4] scale-x-[2] hover:scale-y-[4.5] hover:scale-x-[2.5] active:scale-x-300"
   >
-    <span class="text-4xl font-bold inline-flex items-center justify-center select-none leading-none -translate-y-[4px]">
+    <span class="text-4xl font-bold inline-flex items-center justify-center select-none leading-none -translate-y-1">
       &rsaquo;
     </span>
   </button>
 
   <div class="track flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar">
-    {duplicatedImages.map((item) => (
-      <div class="snap-start shrink-0 w-[calc((100%-2*1rem)/3)] overflow-hidden hover:opacity-80">
-        <Image
-          src={item.data ? item.data.coverImage : item}
-          alt={item.data ? item.data.title : "Galeriebild"}
-          class="w-full h-full object-cover select-none cursor-pointer"
-          width={1280}
-          height={720}
-        />
-      </div>
-    ))}
+    {duplicatedImages.map((item) => {
+      const imgSrc = item.data ? item.data.coverImage : item;
+      const imgAlt = item.data ? item.data.title : "Galeriebild";
+
+      return (
+        <div class="snap-start shrink-0 w-[calc((100%-3*1.5rem)/4)] overflow-hidden transition-opacity hover:opacity-90">
+
+          <div class="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
+
+            <Image
+              src={imgSrc}
+              alt=""
+              aria-hidden="true"
+              class="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-40 select-none pointer-events-none"
+              width={640}
+              height={360}
+            />
+
+            <Image
+              src={imgSrc}
+              alt={imgAlt}
+              class="relative z-10 max-h-full max-w-full object-contain select-none cursor-pointer"
+              width={1280}
+              height={720}
+            />
+          </div>
+
+        </div>
+      );
+    })}
   </div>
 </div>
 
@@ -67,11 +86,11 @@ const duplicatedImages = [...images, ...images];
 
     let autoScrollInterval: ReturnType<typeof setInterval>;
 
-    // Berechnet die Scrollweite exakt für ein Bild inklusive Lücke (gap)
+    // Berechnet die Scrollweite dynamisch für ein Bild inklusive Lücke (gap-6 = 24px)
     const getScrollAmount = () => {
       const item = track.querySelector('div') as HTMLElement;
-      if (!item) return track.clientWidth / 3;
-      return item.offsetWidth + 24; // 16px ist der gap-4 Abstand
+      if (!item) return track.clientWidth / 4;
+      return item.offsetWidth + 24;
     };
 
     // Scroll nach rechts mit unsichtbarem Loop

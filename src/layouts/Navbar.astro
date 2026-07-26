@@ -1,40 +1,25 @@
 ---
 import { Image } from "astro:assets";
-import myLogo from "@/assets/logo.svg";
-
-const navData = [
-  {
-    title: "Themen",
-    href: "/themen"
-  },
-  {
-    title: "Home",
-    href: "/"
-  },
-  {
-    title: "Aktuelles",
-    href: "/termine"
-  }
-];
+import myLogo from "@/assets/logo.png";
 ---
 
-<nav class="bg-surface shadow-lg sticky top-0 right-0 left-0 flex items-center justify-center mb-section">
-  <ul class="flex justify-center items-center font-bold text-lg h-full">
-    {
-      navData.map(i => {
-        const hasIcon = i.href === "/";
-        return (
-          <li class="hover:underline hover:scale-105 h-full flex items-center">
-            <a href={i.href} class="px-4 py-2 inline-flex justify-center items-center">
-              {
-                hasIcon ? (
-                  <Image src={myLogo} alt="Logo" class="size-icon-lg hover:opacity-80"/>
-                ) : i.title
-              }
-            </a>
-          </li>
-        )
-      })
-    }
+<nav class="bg-surface shadow-lg sticky top-0 right-0 left-0 flex items-center justify-center mb-section font-bold text-lg">
+
+  <ul class="flex-1 flex justify-end items-center h-full">
+    <li class="hover:underline hover:scale-105 h-full flex items-center">
+      <a href="/themen" class="px-4 py-2 inline-flex justify-center items-center">Themenwelten</a>
+    </li>
+  </ul>
+
+  <div class="px-4 flex justify-center items-center">
+    <a href="/" class="hover:scale-105 inline-flex justify-center items-center">
+      <Image src={myLogo} alt="Logo" class="size-icon-lg hover:opacity-80"/>
+    </a>
+  </div>
+
+  <ul class="flex-1 flex justify-start items-center h-full">
+    <li class="hover:underline hover:scale-105 h-full flex items-center">
+      <a href="/termine" class="px-4 py-2 inline-flex justify-center items-center">Aktuelle Termine</a>
+    </li>
   </ul>
 </nav>

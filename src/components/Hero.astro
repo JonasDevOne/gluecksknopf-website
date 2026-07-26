@@ -1,6 +1,6 @@
 ---
 import {Image} from "astro:assets";
-import myLogo from "@/assets/logo.svg";
+import myLogo from "@/assets/logo.png";
 import facebook from "@/assets/facebook.svg"
 import instagram from "@/assets/instagram.svg"
 import whatsApp from "@/assets/whatsApp.svg"
@@ -10,24 +10,24 @@ const links = [
   {
     title : "FB",
     icon : facebook,
-    href : "https://facebook.de"
+    href : "https://www.facebook.com/Gluecksknopf"
   },
   {
     title : "IG",
     icon : instagram,
-    href : "https://instagram.de"
+    href : "https://instagram.com/gluecks.knopf"
   },
   {
     title : "WA",
     icon : whatsApp,
-    href : "https://whatsapp.com"
+    href : "https://wa.me/491704874221"
   }
 ];
 ---
 
 <Section label="Hero Section">
-  <div class="flex flex-col items-center gap-space-md">
-    <Image src={myLogo} alt="Logo" class="size-icon-xl w-auto" />
+  <div class="flex flex-col items-center gap-space-md mb-section">
+    <Image src={myLogo} alt="Logo" class="size-icon-xl" />
     <ul class="flex justify-center gap-space-xs">
       {links.map((i) => (
         <li>
