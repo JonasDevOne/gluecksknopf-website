@@ -2,53 +2,60 @@
 import Section from "@/layouts/Section.astro";
 import {baseData} from "@/data/siteData";
 
-const limit = 25;
+const lines = 3;
 const text = baseData.about;
-const words = text.trim().split(/\s+/);
-const isLong = words.length > limit;
-
-// Erzeuge gekürzten Text
-const truncatedText = isLong ? words.slice(0, limit).join(' ') + '...' : text;
 ---
-
 
 <Section label="About" class="flex flex-col items-center content-center max-w-[70vw] mx-auto gap-3 my-5">
   <h2 class="mb-5 px-3 py-2 font-bold text-2xl border-2 border-current">Über mich</h2>
-  <div class="word-limit-container">
-    {isLong ? (
-      <p class="leading-relaxed">
-        <span class="short-text">{truncatedText}</span>
-        <span class="full-text hidden">{text}</span>
-        <button
-          class="toggle-btn ml-1 font-semibold text-accent hover:underline cursor-pointer text-lg opacity-70"
-        >
-          Mehr anzeigen
-        </button>
+    <div class="expandable-text group">
+      <p class={`text-content line-clamp-${lines} transition-all duration-300 ease-in-out`}>
+          {text}
       </p>
-    ) : (
-      <p class="leading-relaxed">{text}</p>
-    )}
-  </div>
+      <button class="toggle-btn text-base font-semibold text-accent hover:text-accent-800 hover:underline cursor-pointer transition-colors" aria-expanded="false"
+      >
+        Mehr anzeigen
+      </button>
+    </div>
 </Section>
 
 <script>
-  document.querySelectorAll('.word-limit-container').forEach((container) => {
-    const btn = container.querySelector('.toggle-btn');
-    const shortText = container.querySelector('.short-text');
-    const fullText = container.querySelector('.full-text');
+    function setupExpandableText() {
+        const containers = document.querySelectorAll('.expandable-text');
 
-    btn?.addEventListener('click', () => {
-      const isExpanded = !fullText?.classList.contains('hidden');
+        containers.forEach((container) => {
+            const textEl = container.querySelector('.text-content');
+            const btn = container.querySelector('.toggle-btn') as HTMLButtonElement;
 
-      if (isExpanded) {
-        shortText?.classList.remove('hidden');
-        fullText?.classList.add('hidden');
-        btn.textContent = 'Mehr anzeigen';
-      } else {
-        shortText?.classList.add('hidden');
-        fullText?.classList.remove('hidden');
-        btn.textContent = 'Weniger anzeigen';
-      }
-    });
-  });
+            if (!textEl || !btn) return;
+
+            // Prüfen, ob der Text überhaupt abgeschnitten wird
+            const isOverflowing = textEl.scrollHeight > textEl.clientHeight;
+
+            // Falls der Text kurz genug ist, Button ausblenden
+            if (!isOverflowing) {
+                btn.style.display = 'none';
+                return;
+            }
+
+            btn.addEventListener('click', () => {
+                const isClamped = textEl.classList.contains('line-clamp-3'); // bzw. deine Standardzeilenzahl
+
+                if (isClamped) {
+                    // Alle line-clamp-Klassen entfernen, um vollen Text anzuzeigen
+                    textEl.className = textEl.className.replace(/line-clamp-\d+/, '');
+                    btn.textContent = 'Weniger anzeigen';
+                    btn.setAttribute('aria-expanded', 'true');
+                } else {
+                    // Wieder einkappen
+                    textEl.classList.add('line-clamp-3');
+                    btn.textContent = 'Mehr anzeigen';
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+    }
+
+    // Initial ausführen
+    setupExpandableText();
 </script>
