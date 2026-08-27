@@ -15,4 +15,15 @@ const imageCollection = defineCollection({
   }),
 });
 
-export const collections = { imageCollection };
+const themeCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/themen' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    text: z.string(),
+    img: image(),
+    alt: z.string().default(''),
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = { imageCollection, themeCollection };

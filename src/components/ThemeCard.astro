@@ -1,0 +1,19 @@
+---
+import { Image } from 'astro:assets';
+
+const {img, alt, title = "Titel", text} = Astro.props;
+
+
+---
+
+<div aria-label="card" class="bg-surface">
+  <div class="">
+    <Image
+        src={img}
+        alt={alt}
+        class=""
+    />
+  </div>
+  <h2 class="text-lg">{title}</h2>
+  <p class="text-sm">{text}</p>
+</div>

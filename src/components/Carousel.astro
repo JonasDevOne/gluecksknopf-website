@@ -41,25 +41,12 @@ const duplicatedImages = [...images, ...images];
         <div class="snap-start shrink-0 w-[calc((100%-3*1.5rem)/4)] overflow-hidden transition-opacity hover:opacity-90">
 
           <div class="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
-
-            <Image
-              src={imgSrc}
-              alt=""
-              aria-hidden="true"
-              class="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-40 select-none pointer-events-none"
-              width={640}
-              height={360}
-            />
-
             <Image
               src={imgSrc}
               alt={imgAlt}
               class="relative z-10 max-h-full max-w-full object-contain select-none cursor-pointer"
-              width={1280}
-              height={720}
             />
           </div>
-
         </div>
       );
     })}
