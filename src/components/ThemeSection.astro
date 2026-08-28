@@ -4,6 +4,7 @@ import LinkButton from "./LinkButton.astro";
 
 import { getCollection } from 'astro:content';
 import Card from './ThemeCard.astro';
+import CarouselNew from "@/components/CarouselNew.astro";
 
 const themen = await getCollection('themeCollection');
 themen.sort((a, b) => a.data.order - b.data.order);
@@ -12,15 +13,6 @@ themen.sort((a, b) => a.data.order - b.data.order);
 <Section label="Theme Section" class="max-w-[95vw] mx-auto my-5">
   <LinkButton link="/themen">Themenwelten</LinkButton>
 
-  <div class="slider-container flex overflow-x-auto gap-4">
-    {themen.map((thema) => (
-      <Card
-          img={thema.data.img}
-          alt={thema.data.alt}
-          title={thema.data.title}
-          text={thema.data.text}
-      />
-    ))}
-  </div>
+  <CarouselNew/>
 
 </Section>
