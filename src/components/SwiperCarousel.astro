@@ -1,0 +1,109 @@
+---
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+interface Props {
+  autoplay?: boolean;
+  delay?: number;
+  loop?: boolean;
+  spaceBetween?: number;
+  showNavigation?: boolean;
+  showPagination?: boolean;
+  slidesPerViewMobile?: number;
+  slidesPerViewTablet?: number;
+  slidesPerViewDesktop?: number;
+  class?: string;
+}
+
+const {
+  autoplay = false,
+  delay = 5000,
+  loop = true,
+  spaceBetween = 16,
+  showNavigation = true,
+  showPagination = false,
+  slidesPerViewMobile = 1,
+  slidesPerViewTablet = 3,
+  slidesPerViewDesktop = 8,
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+    class={`swiper-container-wrapper relative w-full mx-auto px-15 py-2 overflow-hidden group ${className}`}
+    data-autoplay={autoplay ? 'true' : 'false'}
+    data-delay={delay}
+    data-loop={loop ? 'true' : 'false'}
+    data-space-between={spaceBetween}
+    data-spv-mobile={slidesPerViewMobile}
+    data-spv-tablet={slidesPerViewTablet}
+    data-spv-desktop={slidesPerViewDesktop}
+>
+  <div class={`swiper w-full ${showPagination ? 'pb-10!' : ''}`}>
+    <div class="swiper-wrapper items-stretch">
+      <slot />
+    </div>
+
+    {showPagination && <div class="swiper-pagination"></div>}
+  </div>
+
+  {showNavigation && (
+      <>
+        <div class="swiper-button-prev left-1! hidden! md:flex! text-indigo-600 after:text-xl!"></div>
+        <div class="swiper-button-next right-1! hidden! md:flex! text-indigo-600 after:text-xl!"></div>
+      </>
+  )}
+</div>
+
+<script>
+  import Swiper from 'swiper';
+  import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+
+  function initSwiper() {
+    const wrappers = document.querySelectorAll<HTMLElement>('.swiper-container-wrapper');
+
+    wrappers.forEach((wrapper) => {
+      const swiperEl = wrapper.querySelector('.swiper') as HTMLElement;
+      if (!swiperEl) return;
+
+      const autoplay = wrapper.dataset.autoplay === 'true';
+      const delay = Number(wrapper.dataset.delay) || 5000;
+      const loop = wrapper.dataset.loop === 'true';
+      const spaceBetween = Number(wrapper.dataset.spaceBetween) || 16;
+      const spvMobile = Number(wrapper.dataset.spvMobile) || 1;
+      const spvTablet = Number(wrapper.dataset.spvTablet) || 3;
+      const spvDesktop = Number(wrapper.dataset.spvDesktop) || 8;
+
+      new Swiper(swiperEl, {
+        modules: [Autoplay, Navigation, Pagination],
+        loop,
+        spaceBetween,
+        autoplay: autoplay
+            ? {
+              delay,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }
+            : false,
+        pagination: {
+          el: wrapper.querySelector('.swiper-pagination') as HTMLElement,
+          clickable: true,
+          dynamicBullets: false,
+        },
+        navigation: {
+          nextEl: wrapper.querySelector('.swiper-button-next') as HTMLElement,
+          prevEl: wrapper.querySelector('.swiper-button-prev') as HTMLElement,
+        },
+        breakpoints: {
+          0: { slidesPerView: spvMobile },
+          640: { slidesPerView: spvTablet },
+          1024: { slidesPerView: spvDesktop },
+        },
+      });
+    });
+  }
+
+  initSwiper();
+  document.addEventListener('astro:page-load', initSwiper);
+</script>
