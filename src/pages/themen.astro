@@ -1,11 +1,23 @@
 ---
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SidebarNav from "@/components/SidebarNav.astro";
+import {getCollection} from "astro:content";
 
+const themen = await getCollection('themeCollection');
+themen.sort((a, b) => a.data.order - b.data.order);
+
+const navItems = themen.map((item) => ({
+  id: item.id,
+  title: item.data.title,
+  href: `#${item.id}`,
+}));
 ---
 
 <BaseLayout>
-  <div class="text-center my-100">
-    <h1 class="text-3xl">Themen</h1>
-  </div>
+  <SidebarNav items={navItems}>
+    <div class="text-center my-10 flex justify-center">
+      <h1 class="text-3xl font-bold">Themen</h1>
+    </div>
+  </SidebarNav>
 </BaseLayout>

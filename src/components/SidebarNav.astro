@@ -1,0 +1,202 @@
+---
+export interface NavItem {
+  title: string;
+  href: string;
+}
+
+interface Props {
+  items?: NavItem[];
+  class?: string;
+}
+
+const { items = [], class: className = '' } = Astro.props;
+---
+
+<div class={`sidebar-responsive-container is-open relative flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] w-full ${className}`}>
+
+  <div
+      class="sidebar-backdrop fixed inset-x-0 top-16 bottom-0 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300 z-30 lg:hidden"
+  ></div>
+
+  <aside
+      class="sidebar-menu fixed lg:sticky lg:top-24 left-0 h-[calc(100vh-4rem)] w-80 bg-surface text-white p-6 shadow-[12px_0_20px_-4px_rgba(0,0,0,0.2)] z-40 flex flex-col justify-start shrink-0 overflow-y-auto"
+  >
+    <slot name="menu">
+      <h2 class="text-xl font-bold mb-6 text-black border-b border-slate-800 pb-3">Themen</h2>
+      <nav class="flex flex-col space-y-2">
+        {items.map((item) => (
+          <a
+            href={item.href}
+            class="px-4 py-2.5 rounded-xl hover:bg-accent transition-colors duration-200 text-black hover:text-gray-600 text-base font-medium"
+          >
+            {item.title}
+          </a>
+          )
+        )}
+      </nav>
+    </slot>
+  </aside>
+
+  <button
+      type="button"
+      aria-label="Menü umschalten"
+      class="menu-button fixed top-28 z-40 p-2.5 rounded-xl bg-accent text-white cursor-pointer transition-all duration-300 shadow-md"
+  >
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <main class="content-slide flex-1 min-w-0 text-gray-900 relative min-h-[calc(100vh-4rem)] p-6 md:p-8">
+    <slot />
+  </main>
+</div>
+
+<style>
+  /* Burger Animation Styles */
+  .bar {
+    display: block;
+    width: 26px;
+    height: 3px;
+    margin: 4px auto;
+    background-color: currentColor;
+    border-radius: 4px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .menu-button:hover .bar:nth-of-type(1) {
+    transform: translateY(2px) rotate(-4.5deg);
+  }
+  .menu-button:hover .bar:nth-of-type(2) {
+    opacity: 0.8;
+  }
+  .menu-button:hover .bar:nth-of-type(3) {
+    transform: translateY(-1.5px) rotate(4.5deg);
+  }
+
+  .menu-button.cross:hover .bar:nth-of-type(1) {
+    transform: translateY(6px) rotate(-40.5deg);
+  }
+  .menu-button.cross:hover .bar:nth-of-type(2) {
+    opacity: 0.2;
+  }
+  .menu-button.cross:hover .bar:nth-of-type(3) {
+    transform: translateY(-6px) rotate(40.5deg);
+  }
+
+  /* Cross-Zustand (X) */
+  .menu-button.cross .bar:nth-of-type(1) {
+    transform: translateY(7px) rotate(-45deg);
+  }
+  .menu-button.cross .bar:nth-of-type(2) {
+    opacity: 0;
+  }
+  .menu-button.cross .bar:nth-of-type(3) {
+    transform: translateY(-7px) rotate(45deg);
+  }
+
+  /* --- POSITION DES BUTTONS --- */
+  /* Geschlossen: Button sitzt ganz links (16px / left-4) */
+  .sidebar-responsive-container.closed .menu-button {
+    left: 1rem;
+  }
+
+  /* Offen: Button wandert sanft rechts neben die Sidebar (320px Sidebar + 16px Abstand = 21rem) */
+  .sidebar-responsive-container.is-open .menu-button {
+    left: 21rem;
+  }
+
+  /* --- MOBIL ZUSTÄNDE --- */
+  @media (max-width: 1023px) {
+    .sidebar-responsive-container .sidebar-menu {
+      transition: transform 0.3s ease;
+      transform: translateX(-100%);
+    }
+
+    .sidebar-responsive-container.is-open .sidebar-menu {
+      transform: translateX(0);
+    }
+
+    .sidebar-responsive-container.is-open .sidebar-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  /* --- DESKTOP EINKLAPP-ANIMATION --- */
+  @media (min-width: 1024px) {
+    .sidebar-responsive-container .sidebar-menu {
+      transition: margin-left 0.3s ease, opacity 0.1s ease;
+      transform: none; /* Deaktiviert Translate auf Desktop für stabiles Sticky-Verhalten */
+    }
+
+    /* Geschlossen auf Desktop: Sidebar schiebt sich nach links aus dem Flex-Fluss */
+    .sidebar-responsive-container.closed .sidebar-menu {
+      margin-left: -20rem;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Offen auf Desktop: Reckt sich in den normalen Flex-Fluss ein */
+    .sidebar-responsive-container.is-open .sidebar-menu {
+      margin-left: 0;
+      opacity: 1;
+    }
+
+    /* Der Hauptinhalt passt sich dank Flexbox (flex-1) automatisch an und benötigt kein margin-left */
+    .sidebar-responsive-container .content-slide {
+      margin-left: 0;
+    }
+  }
+</style>
+
+<script>
+  function initResponsiveSidebar() {
+    const containers = document.querySelectorAll('.sidebar-responsive-container');
+
+    containers.forEach((container) => {
+      const menuButton = container.querySelector('.menu-button');
+      const backdrop = container.querySelector('.sidebar-backdrop');
+
+      if (!menuButton) return;
+
+      const isDesktop = () => window.innerWidth >= 1024;
+
+      // Initialen Zustand setzen
+      if (isDesktop()) {
+        if (!container.classList.contains('closed')) {
+          container.classList.add('is-open');
+          menuButton.classList.add('cross');
+        }
+      } else {
+        if (container.classList.contains('is-open')) {
+          menuButton.classList.add('cross');
+        } else {
+          container.classList.add('closed');
+        }
+      }
+
+      const toggleMenu = () => {
+        const isOpen = container.classList.contains('is-open');
+
+        if (isOpen) {
+          // Menü Schließen
+          container.classList.remove('is-open');
+          container.classList.add('closed');
+          menuButton.classList.remove('cross');
+        } else {
+          // Menü Öffnen
+          container.classList.remove('closed');
+          container.classList.add('is-open');
+          menuButton.classList.add('cross');
+        }
+      };
+
+      menuButton.addEventListener('click', toggleMenu);
+      backdrop?.addEventListener('click', toggleMenu);
+    });
+  }
+
+  initResponsiveSidebar();
+  document.addEventListener('astro:page-load', initResponsiveSidebar);
+</script>
