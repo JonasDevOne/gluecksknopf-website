@@ -2,10 +2,8 @@
 const { label, class: className = '' } = Astro.props;
 ---
 
-<section aria-label={label} class="mb-section">
-  <div class="border-y-2 text-2xl">
-    <div class=`${className}`>
-      <slot/>
-    </div>
+<section aria-label={label} class="mb-section border-y-2 text-2xl">
+  <div class=`${className}`>
+    <slot/>
   </div>
 </section>

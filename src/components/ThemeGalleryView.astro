@@ -1,0 +1,34 @@
+---
+import Section from "@/layouts/Section.astro";
+import ThemeSection from "@/components/ThemeSection.astro";
+
+interface Props {
+  themenWithImages: Array<{
+    thema: any;
+    images: any[];
+  }>;
+}
+
+const { themenWithImages } = Astro.props;
+---
+
+<Section aria-label="Theme-Gallery" class="flex flex-col gap-6 py-4">
+  {themenWithImages.map(({ thema, images }, themeIndex) => (
+      <ThemeSection
+          thema={thema}
+          themeImages={images}
+          themeIndex={themeIndex}
+      />
+  ))}
+</Section>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const summary = target.closest('summary');
+
+    if (summary && !target.closest('.toggle-btn')) {
+      e.preventDefault();
+    }
+  });
+</script>

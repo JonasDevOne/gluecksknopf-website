@@ -7,7 +7,7 @@ const imageCollection = defineCollection({
   schema: ({image}) => z.object({
     title: z.string(),
     description: z.string(),
-    category: z.string(),
+    theme: z.string(),
     publishDate: z.date(),
     order: z.number().default(0),
     hideInCarousel: z.boolean().default(false),

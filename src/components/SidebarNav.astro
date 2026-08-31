@@ -27,7 +27,7 @@ const { items = [], class: className = '' } = Astro.props;
         {items.map((item) => (
           <a
             href={item.href}
-            class="px-4 py-2.5 rounded-xl hover:bg-accent transition-colors duration-200 text-black hover:text-gray-600 text-base font-medium"
+            class="px-4 py-2.5 rounded-xl hover:bg-accent transition-colors duration-200 text-black text-base font-medium"
           >
             {item.title}
           </a>
@@ -38,16 +38,16 @@ const { items = [], class: className = '' } = Astro.props;
   </aside>
 
   <button
-      type="button"
-      aria-label="Menü umschalten"
-      class="menu-button fixed top-28 z-40 p-2.5 rounded-xl bg-accent text-white cursor-pointer transition-all duration-300 shadow-md"
+    type="button"
+    aria-label="Menü umschalten"
+    class="menu-button fixed top-28 z-40 p-2.5 rounded-xl bg-accent text-white cursor-pointer transition-all duration-300 shadow-md"
   >
     <span class="bar"></span>
     <span class="bar"></span>
     <span class="bar"></span>
   </button>
 
-  <main class="content-slide flex-1 min-w-0 text-gray-900 relative min-h-[calc(100vh-4rem)] p-6 md:p-8">
+  <main class="content-slide flex-1 min-w-0 text-gray-900 relative min-h-[calc(100vh-4rem)] py-6 px-20 md:py-8 top-10">
     <slot />
   </main>
 </div>

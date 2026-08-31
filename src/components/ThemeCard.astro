@@ -1,19 +1,23 @@
 ---
 import { Image } from 'astro:assets';
 
-const { img, alt, title = "Titel", text } = Astro.props;
+const { img, alt, title = "Titel", text, id = "" } = Astro.props;
+const anchor = id;
 ---
 
 <div aria-label="card" class="swiper-slide h-auto flex">
-  <div class="bg-white rounded-2xl shadow-md hover:opacity-80 flex flex-col w-full overflow-hidden">
+  <a
+      href={`/themen#${anchor}`}
+      class="bg-white rounded-2xl shadow-md hover:opacity-80 flex flex-col w-full overflow-hidden transition-opacity"
+  >
     <Image
         src={img}
         alt={alt}
         class="w-full aspect-video object-cover"
     />
     <div class="p-4 flex flex-col flex-1">
-      <h3 class="text-base font-bold text-gray-900 mb-1">{title}</h3>
+      <h3 class="text-base font-bold mb-1">{title}</h3>
       <p class="text-gray-600 text-xs leading-relaxed">{text}</p>
     </div>
-  </div>
+  </a>
 </div>

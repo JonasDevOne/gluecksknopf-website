@@ -1,23 +1,31 @@
 ---
-
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SidebarNav from "@/components/SidebarNav.astro";
-import {getCollection} from "astro:content";
+import ThemeGalleryView from "@/components/ThemeGalleryView.astro";
+import { getCollection } from "astro:content";
 
+// 1. Collections laden
 const themen = await getCollection('themeCollection');
+const images = await getCollection('imageCollection');
+
+// 2. Sortieren
 themen.sort((a, b) => a.data.order - b.data.order);
 
+// 3. Navigation-Items erzeugen
 const navItems = themen.map((item) => ({
-  id: item.id,
   title: item.data.title,
   href: `#${item.id}`,
+}));
+
+// 4. Themen direkt mit ihren passenden Bildern verknüpfen (verhindert Filter-Logik im Template)
+const themenWithImages = themen.map((thema) => ({
+  thema,
+  images: images.filter((img) => img.data.theme === thema.data.title),
 }));
 ---
 
 <BaseLayout>
   <SidebarNav items={navItems}>
-    <div class="text-center my-10 flex justify-center">
-      <h1 class="text-3xl font-bold">Themen</h1>
-    </div>
+    <ThemeGalleryView themenWithImages={themenWithImages} />
   </SidebarNav>
 </BaseLayout>
