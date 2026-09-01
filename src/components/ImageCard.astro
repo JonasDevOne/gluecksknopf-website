@@ -4,17 +4,21 @@ import { Image } from "astro:assets";
 interface Props {
   image: any;
   isEager?: boolean;
+  globalIndex?: number;
 }
 
-const { image, isEager = false } = Astro.props;
+const { image, isEager = false, globalIndex } = Astro.props;
 ---
 
-<div class="group/card relative aspect-video overflow-hidden rounded-xl bg-black flex items-center justify-center shadow-sm">
+<div
+  class="gallery-image-card group/card relative aspect-video overflow-hidden rounded-xl bg-black flex items-center justify-center shadow-sm"
+  data-global-index={globalIndex}
+>
   <Image
-      src={image.data.coverImage}
-      alt={image.data.title}
-      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover/card:scale-105 cursor-pointer select-none"
-      loading={isEager ? "eager" : "lazy"}
+    src={image.data.coverImage}
+    alt={image.data.title}
+    class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover/card:scale-105 cursor-pointer select-none"
+    loading={isEager ? "eager" : "lazy"}
   />
   <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none flex items-end p-2.5">
     <p class="text-xs font-medium text-white line-clamp-1 drop-shadow-sm">

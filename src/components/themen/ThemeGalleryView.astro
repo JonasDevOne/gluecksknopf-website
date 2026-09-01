@@ -1,24 +1,26 @@
 ---
 import Section from "@/layouts/Section.astro";
-import ThemeSection from "@/components/ThemeSection.astro";
+import ThemeSection from "@/components/themen/ThemeSection.astro";
 
 interface Props {
   themenWithImages: Array<{
     thema: any;
     images: any[];
+    startIndex: number;
   }>;
 }
 
 const { themenWithImages } = Astro.props;
 ---
 
-<Section aria-label="Theme-Gallery" class="flex flex-col gap-6 py-4">
-  {themenWithImages.map(({ thema, images }, themeIndex) => (
-      <ThemeSection
-          thema={thema}
-          themeImages={images}
-          themeIndex={themeIndex}
-      />
+<Section aria-label="Theme-Gallery" class="flex flex-col gap-6 py-4" id="theme-gallery-view">
+  {themenWithImages.map(({ thema, images, startIndex }, themeIndex) => (
+    <ThemeSection
+      thema={thema}
+      themeImages={images}
+      themeIndex={themeIndex}
+      startIndex={startIndex}
+    />
   ))}
 </Section>
 
@@ -26,7 +28,6 @@ const { themenWithImages } = Astro.props;
   document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     const summary = target.closest('summary');
-
     if (summary && !target.closest('.toggle-btn')) {
       e.preventDefault();
     }

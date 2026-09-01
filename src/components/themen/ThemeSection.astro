@@ -1,0 +1,58 @@
+---
+import ImageCard from "@/components/ImageCard.astro";
+
+interface Props {
+  thema: any;
+  themeImages: any[];
+  themeIndex: number;
+  startIndex: number;
+}
+
+const { thema, themeImages, themeIndex, startIndex } = Astro.props;
+---
+
+<details
+  id={thema.id}
+  class="group p-5 transition-all scroll-mt-30"
+  open
+>
+  <summary class="flex items-center justify-between list-none select-none focus:outline-none">
+    <div class="flex items-center gap-3">
+      <h2
+        class="theme-title-trigger text-xl md:text-2xl font-bold hover:text-accent hover:underline hover:scale-105 transition-colors cursor-pointer"
+        data-start-index={startIndex}
+      >
+        {thema.data.title}
+      </h2>
+    </div>
+
+    <div class="toggle-btn flex h-9 w-9 items-center justify-center cursor-pointer hover:bg-accent rounded-xl transition-transform duration-300 group-open:rotate-180">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  </summary>
+
+  {themeImages.length > 0 ? (
+    <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+      {themeImages.map((image, idx) => (
+        <ImageCard
+          image={image}
+          isEager={themeIndex === 0 && idx < 10}
+          globalIndex={startIndex + idx}
+        />
+      ))}
+    </div>
+  ) : (
+    <p class="mt-4 text-xs text-slate-400 dark:text-slate-500 italic">
+      Derzeit keine Bilder in diesem Thema vorhanden.
+    </p>
+  )}
+</details>

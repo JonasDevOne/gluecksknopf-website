@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import LinkButton from "./LinkButton.astro";
-import Section from "../layouts/Section.astro";
+import LinkButton from "../LinkButton.astro";
+import Section from "../../layouts/Section.astro";
 import SwiperCarousel from "@/components/SwiperCarousel.astro";
-import {Image} from "astro:assets";
+import ImageCard from "@/components/ImageCard.astro";
 
 const allImages = await getCollection('imageCollection');
 
@@ -17,13 +17,9 @@ const carouselItems = allImages
   <SwiperCarousel slidesPerViewMobile={1} slidesPerViewTablet={3} slidesPerViewDesktop={4} autoplay={true}>
     {carouselItems.map((item) => (
       <div class="swiper-slide">
-        <div class="relative aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center hover:opacity-80">
-          <Image
-            src={item.data.coverImage}
-            alt={item.data.title}
-            class="relative z-10 max-h-full max-w-full object-contain select-none cursor-pointer"
-          />
-        </div>
+        <ImageCard
+          image={item}
+        />
       </div>
     ))}
   </SwiperCarousel>

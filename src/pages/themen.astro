@@ -1,31 +1,53 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SidebarNav from "@/components/SidebarNav.astro";
-import ThemeGalleryView from "@/components/ThemeGalleryView.astro";
+import ThemeGalleryView from "@/components/themen/ThemeGalleryView.astro";
+import ThemeModalView from "@/components/themen/ThemeModalView.astro";
 import { getCollection } from "astro:content";
 
-// 1. Collections laden
 const themen = await getCollection('themeCollection');
 const images = await getCollection('imageCollection');
 
-// 2. Sortieren
 themen.sort((a, b) => a.data.order - b.data.order);
 
-// 3. Navigation-Items erzeugen
 const navItems = themen.map((item) => ({
   title: item.data.title,
   href: `#${item.id}`,
 }));
 
-// 4. Themen direkt mit ihren passenden Bildern verknüpfen (verhindert Filter-Logik im Template)
-const themenWithImages = themen.map((thema) => ({
-  thema,
-  images: images.filter((img) => img.data.theme === thema.data.title),
-}));
+let globalImageCount = 0;
+const themesWithImages = themen.map((thema) => {
+  const themeImages = images.filter((img) => img.data.theme === thema.data.title);
+  const startIndex = globalImageCount;
+  globalImageCount += themeImages.length;
+
+  return {
+    thema,
+    images: themeImages,
+    startIndex,
+  };
+});
+
+const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
+  images.map((img) => ({
+    title: img.data.title,
+    themeTitle: thema.data.title,
+    themeId: thema.id,
+    src: img.data.coverImage.src,
+  }))
+);
 ---
 
 <BaseLayout>
   <SidebarNav items={navItems}>
-    <ThemeGalleryView themenWithImages={themenWithImages} />
+    <div id="view-container" data-active-view="gallery" class="relative w-full h-full">
+
+      <div id="theme-gallery-view" class="w-full">
+        <ThemeGalleryView themenWithImages={themesWithImages} />
+      </div>
+
+      <ThemeModalView allImages={allModalImages} />
+
+    </div>
   </SidebarNav>
 </BaseLayout>

@@ -7,14 +7,16 @@ const anchor = id;
 
 <div aria-label="card" class="swiper-slide h-auto flex">
   <a
-      href={`/themen#${anchor}`}
-      class="bg-white rounded-2xl shadow-md hover:opacity-80 flex flex-col w-full overflow-hidden transition-opacity"
+    href={`/themen#${anchor}`}
+    class="group/card bg-white rounded-2xl shadow-md flex flex-col w-full overflow-hidden"
   >
-    <Image
+    <div class="w-full aspect-video overflow-hidden">
+      <Image
         src={img}
         alt={alt}
-        class="w-full aspect-video object-cover"
-    />
+        class="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-105"
+      />
+    </div>
     <div class="p-4 flex flex-col flex-1">
       <h3 class="text-base font-bold mb-1">{title}</h3>
       <p class="text-gray-600 text-xs leading-relaxed">{text}</p>
