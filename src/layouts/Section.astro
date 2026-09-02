@@ -1,8 +1,8 @@
 ---
-const { label, class: className = '' } = Astro.props;
+const { label, class: className = '', id = "" } = Astro.props;
 ---
 
-<section aria-label={label} class="mb-section text-2xl">
+<section aria-label={label} class="mb-section text-2xl" id={id}>
   <div class=`${className}`>
     <slot/>
   </div>

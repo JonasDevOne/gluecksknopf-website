@@ -8,6 +8,7 @@ import { getCollection } from "astro:content";
 const themen = await getCollection('themeCollection');
 const images = await getCollection('imageCollection');
 
+// Themen selbst nach ihrer Order sortieren
 themen.sort((a, b) => a.data.order - b.data.order);
 
 const navItems = themen.map((item) => ({
@@ -16,8 +17,24 @@ const navItems = themen.map((item) => ({
 }));
 
 let globalImageCount = 0;
+
 const themesWithImages = themen.map((thema) => {
-  const themeImages = images.filter((img) => img.data.theme === thema.data.title);
+  // 1. Bilder des aktuellen Themas filtern und nach der neuen Logik sortieren
+  const themeImages = images
+    .filter((img) => img.data.theme === thema.data.title)
+    .sort((a, b) => {
+      const orderA = a.data.order ?? 0;
+      const orderB = b.data.order ?? 0;
+
+      // Zuerst nach 'order' sortieren (höchste Zahl zuerst)
+      if (orderA !== orderB) {
+        return orderB - orderA;
+      }
+
+      // Bei gleicher Order (z. B. beide 0) nach Datum sortieren (neuestes zuerst)
+      return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
+    });
+
   const startIndex = globalImageCount;
   globalImageCount += themeImages.length;
 
@@ -28,6 +45,7 @@ const themesWithImages = themen.map((thema) => {
   };
 });
 
+// allModalImages übernimmt automatisch die sortierte Reihenfolge aus themesWithImages
 const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
   images.map((img) => ({
     title: img.data.title,
@@ -35,6 +53,8 @@ const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
     themeTitle: thema.data.title,
     themeId: thema.id,
     img: img.data.coverImage,
+    order: img.data.order,
+    publishDate: img.data.publishDate,
   }))
 );
 ---

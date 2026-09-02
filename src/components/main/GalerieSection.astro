@@ -10,7 +10,16 @@ const allImages = await getCollection('imageCollection');
 
 const carouselItems = allImages
   .filter(item => !item.data.hideInCarousel)
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  .sort((a, b) => {
+    const orderA = a.data.order ?? 0;
+    const orderB = b.data.order ?? 0;
+
+    // 1. Nach 'order' sortieren (höchste Zahl zuerst)
+    if (orderA !== orderB) {
+      return orderB - orderA;
+    }
+    return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
+  });
 ---
 
 <Section label="Galerie Section" class="max-w-[95vw] mx-auto my-5">

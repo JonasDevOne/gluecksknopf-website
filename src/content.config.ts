@@ -16,7 +16,7 @@ const imageCollection = defineCollection({
 });
 
 const themeCollection = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/themen' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/themen/' }),
   schema: ({ image }) => z.object({
     title: z.string(),
     text: z.string(),
@@ -27,7 +27,7 @@ const themeCollection = defineCollection({
 });
 
 const termineCollection = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/termine' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/termine/' }),
   schema: ({ }) => z.object({
     startDate: z.coerce.date(),
     endDate: z.coerce.date().optional(),
@@ -36,7 +36,7 @@ const termineCollection = defineCollection({
 });
 
 const fragenCollection = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/fragen' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/fragen/' }),
   schema: ({ }) => z.object({
     title: z.string(),
     description: z.string(),
