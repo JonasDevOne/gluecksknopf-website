@@ -31,9 +31,10 @@ const themesWithImages = themen.map((thema) => {
 const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
   images.map((img) => ({
     title: img.data.title,
+    description: img.data.description,
     themeTitle: thema.data.title,
     themeId: thema.id,
-    src: img.data.coverImage.src,
+    img: img.data.coverImage,
   }))
 );
 ---

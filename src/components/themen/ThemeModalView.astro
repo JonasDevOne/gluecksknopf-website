@@ -3,12 +3,14 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/free-mode';
+import {Image} from "astro:assets";
 
 interface ModalImage {
   title: string;
+  description: string;
   themeTitle: string;
   themeId: string;
-  src: string;
+  img: any;
 }
 
 interface Props {
@@ -19,70 +21,151 @@ const { allImages } = Astro.props;
 ---
 
 <div
-    id="theme-modal"
-    style="display: none;"
-    class="w-full bg-black/95 flex-col justify-between overflow-hidden rounded-xl max-h-[calc(100vh-9rem)]"
-    aria-hidden="true"
+  id="theme-modal"
+  style="display: none;"
+  class="relative w-full h-full flex flex-col justify-between overflow-visible lg:overflow-hidden max-h-[calc(100vh-8rem)] rounded-2xl border border-slate-500 bg-white"
+  aria-hidden="true"
 >
-  <!-- Modal Header -->
-  <div class="flex items-center justify-between px-6 py-3 bg-neutral-900/90 border-b border-white/10 shrink-0 text-white z-10 min-h-14">
-    <div class="flex flex-col justify-center min-h-9">
-      <h3 id="modal-theme-title" class="text-sm md:text-base font-bold text-accent line-clamp-1"></h3>
-      <p id="modal-image-title" class="text-xs text-slate-400 line-clamp-1 min-h-4"></p>
-    </div>
-    <button
-        id="modal-close-btn"
-        type="button"
-        class="p-2 text-white/70 hover:text-white cursor-pointer transition-colors rounded-lg bg-white/10 hover:bg-white/20 shrink-0 ml-4"
-        aria-label="Modal schließen"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
+  <button
+    id="modal-close-btn"
+    type="button"
+    class="close-btn absolute top-0 -right-14 lg:top-3 lg:right-3 z-40 p-2.5 rounded-xl bg-slate-600 text-white hover:text-accent cursor-pointer transition-all duration-300 shadow-md border border-slate-200"
+    aria-label="Modal schließen"
+  >
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
 
-  <!-- Haupt-Swiper -->
-  <div class="swiper main-swiper w-full flex-1 min-h-0 relative select-none bg-black">
-    <div class="swiper-wrapper">
-      {allImages.map((img) => (
+  <!-- Hauptbereich: Flex-Layout mit 3 Spalten (Button Links | Swiper Mitte | Button Rechts) -->
+  <div class="w-full flex-1 min-h-0 flex items-center justify-between gap-2 sm:gap-4 py-4 sm:py-6">
+
+    <!-- 1. Feste Spalte Links: Button liegt außerhalb des Swipers -->
+    <div class="shrink-0 flex items-center justify-center w-8 sm:w-10 h-full">
+      <div class="swiper-button-prev static! top-auto! left-auto! right-auto! mt-0! text-slate-700! hover:text-accent! after:text-lg! sm:after:text-xl! cursor-pointer"></div>
+    </div>
+
+    <!-- 2. Mittlere Spalte: Haupt-Swiper -->
+    <div class="swiper main-swiper flex-1 min-w-0 h-full relative select-none">
+      <div class="swiper-wrapper">
+        {allImages.map((img) => (
           <div
-              class="swiper-slide flex! items-center justify-center p-4 h-full w-full overflow-hidden"
-              data-theme-id={img.themeId}
-              data-theme-title={img.themeTitle}
-              data-image-title={img.title}
+            class="swiper-slide flex! flex-col xl:flex-row items-center justify-center gap-4 xl:gap-8 h-full w-full min-w-0 min-h-0 overflow-hidden p-1 sm:p-2"
+            data-theme-id={img.themeId}
+            data-theme-title={img.themeTitle}
+            data-image-title={img.title}
           >
-            <div class="relative w-full h-full flex items-center justify-center min-h-0 overflow-hidden">
-              <img
-                  src={img.src}
-                  alt={img.title || "Galerie Bild"}
-                  class="max-h-full max-w-full object-contain pointer-events-none select-none rounded-lg"
-              />
+            <!-- 16:9 Image Card Container -->
+            <div class="relative flex-1 w-full h-full max-h-full min-w-0 min-h-0 flex items-center justify-center overflow-hidden">
+              <!-- w-full h-auto unter 1280px (verhindert horizontales Überquellen), xl:h-full xl:w-auto ab 1280px -->
+              <div class="relative aspect-video w-full xl:w-auto h-auto xl:h-full max-h-full max-w-full flex items-center justify-center bg-black rounded-xl overflow-hidden shadow-md border border-slate-200">
+
+                <!-- Verschwommener Hintergrund für Hochformat-/schmale Bilder -->
+                <Image
+                  src={img.img}
+                  alt=""
+                  class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 pointer-events-none select-none scale-125"
+                />
+
+                <!-- Hauptbild -->
+                <Image
+                  src={img.img}
+                  alt={img.title || img.themeTitle || "Galerie Bild"}
+                  class="relative z-10 w-full h-full object-contain pointer-events-none select-none"
+                />
+              </div>
+            </div>
+
+            <!-- Titel & Bildbeschreibung -->
+            <div class="w-full xl:w-80 xl:max-w-md shrink xl:min-w-48 flex flex-col justify-center text-left py-2 px-1 xl:px-3 max-h-[40%] xl:max-h-full overflow-y-auto">
+              <!-- Thema dezent oben drüber -->
+              {img.themeTitle && (
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                {img.themeTitle}
+              </span>
+              )}
+
+              <!-- Bildtitel als Hauptüberschrift -->
+              <h3 class="text-lg xl:text-2xl font-bold text-slate-800 line-clamp-2">
+                {img.title || img.themeTitle}
+              </h3>
+
+              <!-- Bildbeschreibung -->
+              {(img.description) && (
+                <p class="text-sm xl:text-base text-slate-600 mt-2 line-clamp-3 sm:line-clamp-4 xl:line-clamp-8">
+                  {img.description}
+                </p>
+              )}
             </div>
           </div>
-      ))}
+        ))}
+      </div>
     </div>
-    <div class="swiper-button-next text-white! after:text-xl!"></div>
-    <div class="swiper-button-prev text-white! after:text-xl!"></div>
+
+    <!-- 3. Feste Spalte Rechts: Button liegt außerhalb des Swipers -->
+    <div class="shrink-0 flex items-center justify-center w-8 sm:w-10 h-full">
+      <div class="swiper-button-next static! top-auto! left-auto! right-auto! mt-0! text-slate-700! hover:text-accent! after:text-lg! sm:after:text-xl! cursor-pointer"></div>
+    </div>
+
   </div>
 
-  <!-- Thumbs-Swiper -->
-  <div class="swiper thumbs-swiper w-full h-24 bg-neutral-950 p-3 shrink-0 select-none border-t border-white/10">
-    <div class="swiper-wrapper flex items-center">
-      {allImages.map((img) => (
-          <div class="swiper-slide w-20! h-16! cursor-pointer rounded-md overflow-hidden shrink-0 border-2 border-transparent transition-all duration-200">
-            <img
-                src={img.src}
-                alt={img.title || "Vorschau"}
-                class="w-full h-full object-cover"
-            />
+  <!-- Thumbs-Bereich: Dynamisch unter dem Bild ausgerichtet (Desktop) & clipping-frei auf Mobilgeräten -->
+  <div class="w-full shrink-0 flex items-center justify-between gap-2 sm:gap-4 pb-3 sm:pb-5">
+
+    <!-- Links: Spacer zur Ausrichtung mit der linken Nav-Spalte -->
+    <div class="shrink-0 w-8 sm:w-10"></div>
+
+    <!-- Mitte: Layout-Spiegelung analog zum Haupt-Swiper -->
+    <div class="flex-1 min-w-0 flex flex-col xl:flex-row gap-4 xl:gap-8 items-center">
+
+      <!-- Thumbs Swiper Container (Auf Desktop exakt unter der 16:9 Image Card, mobil volle verfügbare Breite) -->
+      <div class="w-full xl:flex-1 min-w-0 flex items-center overflow-hidden">
+        <div class="swiper thumbs-swiper w-full h-16 sm:h-20 select-none">
+          <!-- WICHTIG: Kein 'justify-center' am swiper-wrapper, damit Swipers 'translate3d' aktive Thumbs mobil nicht abschneidet -->
+          <div class="swiper-wrapper items-center">
+            {allImages.map((image) => (
+              <div class="swiper-slide w-16! sm:w-20! h-12! sm:h-16! cursor-pointer rounded-xl overflow-hidden shrink-0 border-2 border-transparent transition-all duration-200 shadow-xs">
+                <Image
+                  src={image.img}
+                  alt={image.title || "Vorschau"}
+                  class="h-full w-full object-cover cursor-pointer select-none"
+                />
+              </div>
+            ))}
           </div>
-      ))}
+        </div>
+      </div>
+
+      <!-- Desktop-Platzhalter: Spiegelt exakt die Flex-Breite der Textbox im Hauptbereich wider -->
+      <div class="hidden xl:block xl:w-80 xl:max-w-md xl:min-w-48 shrink pointer-events-none"></div>
+
     </div>
+
+    <!-- Rechts: Spacer zur Ausrichtung mit der rechten Nav-Spalte -->
+    <div class="shrink-0 w-8 sm:w-10"></div>
+
   </div>
 </div>
 
 <style>
+  .thumbs-swiper .swiper-slide {
+    opacity: 0.4;
+  }
+  .thumbs-swiper .swiper-slide-thumb-active {
+    opacity: 1 !important;
+    border-color: var(--color-accent, #3b82f6) !important;
+  }
+
+  .bar {
+    display: block;
+    width: 26px;
+    height: 3px;
+    margin: 4px auto;
+    background-color: currentColor;
+    border-radius: 4px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
   .thumbs-swiper .swiper-slide {
     opacity: 0.4;
   }
@@ -93,6 +176,23 @@ const { allImages } = Astro.props;
     opacity: 1 !important;
     border-color: var(--color-accent, #3b82f6) !important;
     transform: scale(1.05);
+  }
+
+  .close-btn .bar:nth-of-type(1) {
+    transform: translateY(7px) rotate(-45deg);
+  }
+  .close-btn .bar:nth-of-type(2) {
+    opacity: 0;
+  }
+  .close-btn .bar:nth-of-type(3) {
+    transform: translateY(-7px) rotate(45deg);
+  }
+
+  .close-btn:hover .bar:nth-of-type(1) {
+    transform: translateY(6px) rotate(-40.5deg);
+  }
+  .close-btn:hover .bar:nth-of-type(3) {
+    transform: translateY(-6px) rotate(40.5deg);
   }
 </style>
 
@@ -108,7 +208,7 @@ const { allImages } = Astro.props;
 
     if (!modal) return;
 
-    // Direct Elements (verhindert 'querySelectorAll is not a function' Fehler)
+    // Direct Elements
     const mainSwiperEl = modal.querySelector('.main-swiper') as HTMLElement | null;
     const thumbsSwiperEl = modal.querySelector('.thumbs-swiper') as HTMLElement | null;
     const nextEl = modal.querySelector('.swiper-button-next') as HTMLElement | null;
@@ -119,12 +219,10 @@ const { allImages } = Astro.props;
     // 1. Thumbs Swiper
     const thumbsSwiper = new Swiper(thumbsSwiperEl, {
       modules: [FreeMode],
-      spaceBetween: 10,
       slidesPerView: 'auto',
-      centerInsufficientSlides: true,
+      spaceBetween: 12,
       centeredSlides: true,
       slideToClickedSlide: true,
-      freeMode: true,
       watchSlidesProgress: true,
     });
 
@@ -156,17 +254,14 @@ const { allImages } = Astro.props;
     }
 
     function openModal(index: number) {
-      // 1. Galerie über eindeutige ID ausblenden
       const galleryEl = document.getElementById('theme-gallery-view');
       if (galleryEl) {
         galleryEl.style.display = 'none';
       }
 
-      // 2. Modal als Flexbox einblenden
       modal!.style.display = 'flex';
       modal!.setAttribute('aria-hidden', 'false');
 
-      // 3. Swiper neu berechnen & ausrichten
       mainSwiper.update();
       thumbsSwiper.update();
 
@@ -176,17 +271,14 @@ const { allImages } = Astro.props;
     }
 
     function closeModal() {
-      // 1. Modal ausblenden
       modal!.style.display = 'none';
       modal!.setAttribute('aria-hidden', 'true');
 
-      // 2. Galerie wieder einblenden
       const galleryEl = document.getElementById('theme-gallery-view');
       if (galleryEl) {
         galleryEl.style.display = '';
       }
 
-      // 3. Zur gewählten Stelle scrollen
       const activeSlide = mainSwiper.slides[mainSwiper.activeIndex];
       if (activeSlide) {
         const themeId = activeSlide.dataset.themeId;
@@ -200,6 +292,32 @@ const { allImages } = Astro.props;
       }
     }
 
+    function jumpToTheme(themeId: string) {
+      // Sicherheitsabfrage: Wenn das Modal zu ist, machen wir gar nichts!
+      if (!modal || modal.style.display === 'none') return;
+
+      const slides = Array.from(mainSwiper.slides);
+      const targetIndex = slides.findIndex(
+        (slide) => slide.dataset.themeId === themeId
+      );
+
+      if (targetIndex !== -1) {
+        // Slider im Modal zum ersten Bild des Themas bewegen
+        mainSwiper.slideTo(targetIndex);
+        thumbsSwiper.slideTo(targetIndex);
+        updateHeaderInfo(targetIndex);
+      }
+    }
+
+    // Hört auf Sidebar-Klicks, wenn das Modal bereits offen ist
+    window.addEventListener('open-theme-modal', (e: Event) => {
+      const customEvent = e as CustomEvent<{ themeId: string }>;
+      if (customEvent.detail?.themeId) {
+        jumpToTheme(customEvent.detail.themeId);
+      }
+    });
+
+    // Event Delegation für Galerie- und Titel-Klicks
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
 

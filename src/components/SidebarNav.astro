@@ -24,15 +24,18 @@ const { items = [], class: className = '' } = Astro.props;
     <slot name="menu">
       <h2 class="text-xl font-bold mb-6 text-black border-b border-slate-800 pb-3">Themen</h2>
       <nav class="flex flex-col space-y-2">
-        {items.map((item) => (
-          <a
-            href={item.href}
-            class="px-4 py-2.5 rounded-xl hover:bg-accent transition-colors duration-200 text-black text-base font-medium"
-          >
-            {item.title}
-          </a>
-          )
-        )}
+        {items.map((item) => {
+          const targetId = (item.href ? item.href.replace('#', '') : '');
+          return (
+            <a
+              href={item.href}
+              data-theme-target={targetId}
+              class="sidebar-nav-link px-4 py-2.5 rounded-xl hover:bg-accent transition-colors duration-200 text-black text-base font-medium"
+            >
+              {item.title}
+            </a>
+          );
+        })}
       </nav>
     </slot>
   </aside>
@@ -196,6 +199,33 @@ const { items = [], class: className = '' } = Astro.props;
       backdrop?.addEventListener('click', toggleMenu);
     });
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.sidebar-nav-link');
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const modal = document.getElementById('theme-modal');
+        // Prüfen, ob das Modal AKTUELL offen/sichtbar ist
+        const isModalOpen = modal && modal.style.display !== 'none';
+
+        if (isModalOpen) {
+          e.preventDefault();
+
+          const themeId = link.getAttribute('data-theme-target');
+          const href = link.getAttribute('href');
+
+          if (href) {
+            history.pushState(null, '', href);
+          }
+
+          window.dispatchEvent(
+            new CustomEvent('open-theme-modal', { detail: { themeId } })
+          );
+        }
+      });
+    });
+  });
 
   initResponsiveSidebar();
   document.addEventListener('astro:page-load', initResponsiveSidebar);
