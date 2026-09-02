@@ -26,4 +26,22 @@ const themeCollection = defineCollection({
   }),
 });
 
-export const collections = { imageCollection, themeCollection };
+const termineCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/termine' }),
+  schema: ({ }) => z.object({
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
+    description: z.string(),
+  })
+});
+
+const fragenCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/fragen' }),
+  schema: ({ }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    order: z.number().default(0),
+  })
+});
+
+export const collections = { imageCollection, themeCollection, termineCollection, fragenCollection };

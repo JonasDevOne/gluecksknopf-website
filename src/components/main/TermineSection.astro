@@ -1,10 +1,51 @@
 ---
 
 import Section from "../../layouts/Section.astro";
-import LinkButton from "../LinkButton.astro";
+import {getCollection} from "astro:content";
+import SectionHeader from "@/components/SectionHeader.astro";
+
+const termine = await getCollection('termineCollection')
+termine.sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime());
+
+function formatTerminRange(start: Date, end?: Date): string {
+  const pad = (num: number) => String(num).padStart(2, '0');
+
+  const startTagMonat = `${pad(start.getDate())}.${pad(start.getMonth() + 1)}`;
+  const startJahr = String(start.getFullYear()).slice(-2);
+
+  // Wenn KEIN Enddatum angegeben ist (oder Start und Ende am selben Tag liegen):
+  if (!end || start.toDateString() === end.toDateString()) {
+    return `${startTagMonat}.${startJahr}`;
+  }
+
+  // Für mehrtägige Termine: "TT.MM bis TT.MM.YY"
+  const endTagMonat = `${pad(end.getDate())}.${pad(end.getMonth() + 1)}`;
+  const endJahr = String(end.getFullYear()).slice(-2);
+
+  return `${startTagMonat} bis ${endTagMonat}.${endJahr}`;
+}
 ---
 
-<Section label="Termine Section" class="max-w-[95vw] mx-auto my-5">
-  <LinkButton link="/termine">Aktuelles</LinkButton>
+<Section label="Termine Section" class="max-w-[95vw] mx-auto my-5" id="">
+  <SectionHeader title="Aktuelles"/>
+  <ul class="list-none p-0 m-0 space-y-3">
+    {termine.map((item) => (
+      /* items-center zentriert das Icon vertikal exakt zur Textzeile */
+      <li class="flex items-center gap-3">
+        <!-- mt-0.5 entfernt; object-contain schützt vor Verzerren -->
+        <img
+          src="/src/assets/bulletpointlogo.png"
+          class="w-10 h-10 shrink-0 object-contain"
+          alt=""
+        />
 
+        <div class="grid grid-cols-[12rem_1fr] gap-x-2 items-baseline flex-1">
+        <span class="font-bold">
+          {formatTerminRange(item.data.startDate, item.data.endDate)}
+        </span>
+          <span>{item.data.description}</span>
+        </div>
+      </li>
+    ))}
+  </ul>
 </Section>

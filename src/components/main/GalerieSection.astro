@@ -4,6 +4,7 @@ import LinkButton from "../LinkButton.astro";
 import Section from "../../layouts/Section.astro";
 import SwiperCarousel from "@/components/SwiperCarousel.astro";
 import ImageCard from "@/components/ImageCard.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
 
 const allImages = await getCollection('imageCollection');
 
@@ -13,7 +14,7 @@ const carouselItems = allImages
 ---
 
 <Section label="Galerie Section" class="max-w-[95vw] mx-auto my-5">
-  <LinkButton link="/galerie">Galerie</LinkButton>
+  <SectionHeader title="Galerie"/>
   <SwiperCarousel slidesPerViewMobile={1} slidesPerViewTablet={3} slidesPerViewDesktop={4} autoplay={true}>
     {carouselItems.map((item) => (
       <div class="swiper-slide">
