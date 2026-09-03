@@ -44,4 +44,14 @@ const fragenCollection = defineCollection({
   })
 });
 
-export const collections = { imageCollection, themeCollection, termineCollection, fragenCollection };
+const newsCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/news/' }),
+  schema: ({ image }) => z.object({
+    img: image(),
+    title: z.string().optional(),
+    description: z.string(),
+    order: z.number().default(0),
+  })
+});
+
+export const collections = { imageCollection, themeCollection, termineCollection, fragenCollection, newsCollection };

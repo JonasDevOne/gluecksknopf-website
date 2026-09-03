@@ -1,7 +1,7 @@
 ---
 title: "Thema 7"
 text: "Beschreibung 7"
-img: "@/assets/bilder/brücke.jpg"
+img: "@/assets/bilder/test.jpg"
 alt: "Thema 7"
 order: 7
 ---

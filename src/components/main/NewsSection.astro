@@ -1,0 +1,30 @@
+---
+import Section from "@/layouts/Section.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import {getCollection} from "astro:content";
+import {Image} from "astro:assets";
+
+const news = await getCollection('newsCollection');
+news.sort((a, b) => a.data.order - b.data.order);
+---
+
+<Section label="News" class="max-w-[95vw] mx-auto my-5">
+  <SectionHeader title="Neues"/>
+  <div class="flex flex-wrap justify-center gap-8 mt-6">
+    {news.map((item) => (
+      <div class="bg-white rounded-2xl shadow-md flex flex-col w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1.125rem)] max-w-md overflow-hidden">
+        <div class="w-full aspect-video overflow-hidden bg-black">
+          <Image
+            src={item.data.img}
+            alt={item.id}
+            class="w-full h-full object-contain transition-transform duration-300"
+          />
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <h2 class="text-xl font-bold mb-1">{item.data.title}</h2>
+          <p class="text-gray-600 text-lg leading-relaxed">{item.data.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</Section>
