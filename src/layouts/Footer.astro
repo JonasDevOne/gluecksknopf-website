@@ -1,7 +1,35 @@
 ---
+const currentYear = new Date().getFullYear();
 
 ---
 
-<footer class="bg-amber-50 text-center items-center py-5">
-  <p>&copy; 2026 Kerstin Knopf. All rights reserved.</p>
+<footer class="bg-surface py-6 px-4">
+  <div class="max-w-6xl mx-auto flex items-center justify-center gap-4 text-sm">
+
+    <p class="">
+      &copy; {currentYear} Kerstin Knopf. Alle Rechte vorbehalten.
+    </p>
+
+    <nav aria-label="Rechtliche Hinweise">
+      <ul class="flex items-center gap-6 font-medium">
+        <li>
+          <a
+            href="/impressum"
+            class="hover:underline"
+          >
+            Impressum
+          </a>
+        </li>
+        <li>
+          <a
+            href="/datenschutz"
+            class="hover:underline"
+          >
+            Datenschutz
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
 </footer>
