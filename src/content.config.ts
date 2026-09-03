@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import {glob} from "astro/loaders";
 
 const imageCollection = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/bilderDefinition/' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/bilderDefinitionen/' }),
   schema: ({image}) => z.object({
     title: z.string(),
     description: z.string(),
@@ -20,9 +20,8 @@ const themeCollection = defineCollection({
   schema: ({ image }) => z.object({
     title: z.string(),
     text: z.string(),
-    img: image(),
-    alt: z.string().default(''),
     order: z.number().default(0),
+    img: image(),
   }),
 });
 
@@ -47,10 +46,10 @@ const fragenCollection = defineCollection({
 const newsCollection = defineCollection({
   loader: glob({ pattern: '**/[^_]*.md', base: './src/content/news/' }),
   schema: ({ image }) => z.object({
-    img: image(),
     title: z.string().optional(),
     description: z.string(),
     order: z.number().default(0),
+    img: image(),
   })
 });
 

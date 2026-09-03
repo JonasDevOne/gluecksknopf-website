@@ -7,7 +7,7 @@ import SwiperCarousel from "@/components/SwiperCarousel.astro";
 import ThemeCard from "@/components/ThemeCard.astro";
 
 const themen = await getCollection('themeCollection');
-themen.sort((a, b) => a.data.order - b.data.order);
+themen.sort((a, b) => b.data.order - a.data.order);
 ---
 
 <Section label="Theme Section" class="max-w-[95vw] mx-auto my-5">
@@ -16,7 +16,7 @@ themen.sort((a, b) => a.data.order - b.data.order);
     {themen.map((thema) =>(
       <ThemeCard
         img={thema.data.img}
-        alt={thema.data.alt}
+        alt={thema.data.title}
         title={thema.data.title}
         text={thema.data.text}
         id={thema.id}

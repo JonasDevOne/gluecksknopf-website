@@ -5,5 +5,5 @@ theme: "Thema 1"
 publishDate: 2026-09-23
 order: 0
 hideInCarousel: false
-coverImage: "@/assets/bilder/test.jpg"
+coverImage: "@/content/bilder/test.jpg"
 ---

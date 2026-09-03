@@ -9,7 +9,7 @@ const themen = await getCollection('themeCollection');
 const images = await getCollection('imageCollection');
 
 // Themen selbst nach ihrer Order sortieren
-themen.sort((a, b) => a.data.order - b.data.order);
+themen.sort((a, b) => b.data.order - a.data.order);
 
 const navItems = themen.map((item) => ({
   title: item.data.title,
