@@ -38,6 +38,5 @@ body {
 }
 
 :root {
-  /* Ersetze 'Roboto' durch 'Outfit Variable' */
-  --font-sans: 'Outfit Variable', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Quicksand Variable', system-ui, -apple-system, sans-serif;
 }
