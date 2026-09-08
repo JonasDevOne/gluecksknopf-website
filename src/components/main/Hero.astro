@@ -34,11 +34,20 @@ const links = [
 <Section label="Hero Section" class="mt-section">
   <div class="flex flex-col items-center gap-space-md">
     <Image src={myLogo} alt="Logo" class="size-icon-xl" loading="eager"/>
-    <ul class="flex justify-center gap-space-xs">
+    <ul class="flex justify-center items-center gap-space-xs">
       {links.map((i) => (
         <li>
-          <a href={i.href} target="_blank" class="hover:opacity-80 hover:scale-105 block p-1">
-            <Image src={i.icon} alt={i.title} class="size-icon-md w-auto" loading="eager"/>
+          <a
+            href={i.href}
+            target="_blank"
+            class="hover:opacity-80 hover:scale-105 inline-flex items-center justify-center p-1"
+          >
+            <Image
+              src={i.icon}
+              alt={i.title}
+              class="size-icon-md aspect-square object-contain"
+              loading="eager"
+            />
           </a>
         </li>
       ))}
