@@ -7,5 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+
+  site: 'https://jonasdevone.github.io',
+  base: '/gluecksknopf-website',
 });
