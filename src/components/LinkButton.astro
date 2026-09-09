@@ -1,5 +1,7 @@
 ---
-const { link } = Astro.props;
+const { path = '' } = Astro.props;
+
+const link = import.meta.env.BASE_URL + path;
 ---
 
 <a href={link} class="inline-block">

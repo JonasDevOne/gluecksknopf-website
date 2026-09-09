@@ -11,7 +11,7 @@ themen.sort((a, b) => b.data.order - a.data.order);
 ---
 
 <Section label="Theme Section" class="max-w-[95vw] mx-auto my-5">
-  <LinkButton link="/themen">Themenwelten</LinkButton>
+  <LinkButton path="/themen">Themenwelten</LinkButton>
   <SwiperCarousel slidesPerViewMobile={3} slidesPerViewTablet={3} slidesPerViewDesktop={5}>
     {themen.map((thema) =>(
       <ThemeCard

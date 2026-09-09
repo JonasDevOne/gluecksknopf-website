@@ -1,5 +1,6 @@
 ---
 import {baseData} from "@/data/siteData";
+import logo from "@/assets/logo.svg"
 
 const {title = baseData.title, description = baseData.description} = Astro.props;
 ---
@@ -10,5 +11,5 @@ const {title = baseData.title, description = baseData.description} = Astro.props
   <meta name="generator" content={Astro.generator} />
   <meta name="description" content={description}/>
   <title>{title}</title>
-  <link rel="icon" href="/src/assets/logo.svg"/>
+  <link rel="icon" href={logo.src}/>
 </head>
