@@ -21,3 +21,94 @@ import NewsSection from "@/components/main/NewsSection.astro";
   <TermineSection/>
   <FaqSection/>
 </BaseLayout>
+
+<script>
+  // 1. Direkt im Client-Skript aus src/assets/ importieren:
+  import cloverImg from "@/assets/bulletpointlogo.png";
+
+  let isSnowing = false;
+
+  function triggerCloverSnow() {
+    if (isSnowing) return;
+    isSnowing = true;
+
+    const button = document.getElementById('clover-btn');
+    if (button) button.style.pointerEvents = 'none';
+
+    const totalClovers = 35;
+    const maxDurationMs = 9000;
+
+    for (let i = 0; i < totalClovers; i++) {
+      const clover = document.createElement('img');
+
+      // 2. .src nutzen, da der Import ein Bild-Objekt ist
+      clover.src = cloverImg.src;
+
+      clover.style.position = 'fixed';
+      clover.style.top = '0';
+      clover.style.left = '0';
+      clover.style.zIndex = '9999';
+      clover.style.pointerEvents = 'none';
+      clover.style.width = '32px';
+      clover.style.height = '32px';
+
+      const startX = Math.random() * (window.innerWidth - 40);
+      const scale = 0.5 + Math.random();
+      const rotation = (Math.random() - 0.5) * 180;
+      const delay = Math.random() * 2000;
+      const animDuration = 5000 + Math.random() * 1500;
+
+      document.body.appendChild(clover);
+
+      const animation = clover.animate(
+        [
+          {
+            transform: `translate(${startX}px, -10vh) rotate(0deg) scale(${scale})`,
+            opacity: 1
+          },
+          {
+            transform: `translate(${startX}px, calc(100vh - 40px)) rotate(${rotation}deg) scale(${scale})`,
+            opacity: 1,
+            offset: 0.60
+          },
+          {
+            transform: `translate(${startX}px, calc(100vh - 40px)) rotate(${rotation}deg) scale(${scale})`,
+            opacity: 1,
+            offset: 0.85
+          },
+          {
+            transform: `translate(${startX}px, calc(100vh - 40px)) rotate(${rotation}deg) scale(${scale * 1.4})`,
+            opacity: 1,
+            offset: 0.92
+          },
+          {
+            transform: `translate(${startX}px, calc(100vh - 40px)) rotate(${rotation}deg) scale(0)`,
+            opacity: 0,
+            offset: 1.0
+          }
+        ],
+        {
+          duration: animDuration,
+          delay: delay,
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+          fill: 'forwards'
+        }
+      );
+
+      animation.onfinish = () => clover.remove();
+    }
+
+    setTimeout(() => {
+      isSnowing = false;
+      if (button) button.style.pointerEvents = 'auto';
+    }, maxDurationMs);
+  }
+
+  function initCloverScript() {
+    const btn = document.getElementById('clover-btn');
+    btn?.addEventListener('click', triggerCloverSnow);
+  }
+
+  initCloverScript();
+  document.addEventListener('astro:page-load', initCloverScript);
+</script>
