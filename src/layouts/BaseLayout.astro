@@ -21,3 +21,134 @@ import Navbar from "@/layouts/Navbar.astro";
     <Footer />
   </body>
 </html>
+
+<script>
+  import cloverImg from "@/assets/bulletpointlogo.png";
+
+  let isSnowing = false;
+
+  function triggerCloverSnow() {
+    if (isSnowing) return;
+    isSnowing = true;
+
+    // Typisierung <HTMLElement> behebt: "Property style does not exist on type Element"
+    const buttons = document.querySelectorAll<HTMLElement>('.clover-btn');
+    buttons.forEach((btn) => (btn.style.pointerEvents = 'none'));
+
+    const totalClovers = 200;
+    const totalDurationMs = 7000;
+
+    for (let i = 0; i < totalClovers; i++) {
+      const clover = document.createElement('img');
+
+      clover.src = cloverImg.src;
+
+      clover.style.position = 'fixed';
+      clover.style.top = '0';
+      clover.style.left = '0';
+      clover.style.zIndex = '9999';
+      clover.style.pointerEvents = 'none';
+      clover.style.width = '45px';
+      clover.style.height = '45px';
+
+      const startX = Math.random() * (window.innerWidth - 45);
+      const endX = startX + (Math.random() - 0.5) * 40;
+
+      const bottomY = i < 160 ? 40 : 60 + Math.random() * 50;
+
+      const scale = 1 + Math.random();
+      const rotation = (Math.random() - 0.5) * 180;
+      const delay = Math.random() * 3000;
+
+      const animDuration = totalDurationMs - delay;
+
+      document.body.appendChild(clover);
+
+      const animation = clover.animate(
+        [
+          {
+            transform: `translate(${startX}px, -10vh) rotate(0deg) scale(${scale})`,
+            opacity: 1
+          },
+          {
+            transform: `translate(${endX}px, calc(100vh - ${bottomY}px)) rotate(${rotation}deg) scale(${scale})`,
+            opacity: 1,
+            offset: 0.9
+          },
+          {
+            transform: `translate(${endX}px, calc(100vh - ${bottomY}px)) rotate(${rotation}deg) scale(${scale})`,
+            opacity: 1,
+            offset: 0.99
+          },
+          {
+            transform: `translate(${endX}px, calc(100vh - ${bottomY}px)) rotate(${rotation}deg) scale(${scale * 1.4})`,
+            opacity: 1,
+            offset: 0.9999
+          },
+          {
+            transform: `translate(${endX}px, calc(100vh - ${bottomY}px)) rotate(${rotation}deg) scale(5)`,
+            opacity: 0,
+            offset: 1.0
+          }
+        ],
+        {
+          duration: animDuration,
+          delay: delay,
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+          fill: 'both'
+        }
+      );
+
+      animation.onfinish = () => clover.remove();
+    }
+
+    setTimeout(() => {
+      isSnowing = false;
+      buttons.forEach((btn) => (btn.style.pointerEvents = 'auto'));
+    }, totalDurationMs);
+  }
+
+  function checkAutoStart() {
+    if (sessionStorage.getItem('playCloverSnow') === 'true') {
+      sessionStorage.removeItem('playCloverSnow');
+      triggerCloverSnow();
+    }
+  }
+
+  // Klick-Ablaufsteuerung
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    const link = target.closest('a');
+    const baseUrl = import.meta.env.BASE_URL;
+
+    const isHomeLink = link && (
+      link.pathname === '/' ||
+      link.pathname === baseUrl ||
+      link.pathname === baseUrl.replace(/\/$/, '')
+    );
+
+    if (isHomeLink) {
+      sessionStorage.setItem('playCloverSnow', 'true');
+
+      const currentPath = window.location.pathname;
+      const isAlreadyOnHome = currentPath === '/' || currentPath === baseUrl || currentPath === baseUrl.replace(/\/$/, '');
+
+      if (isAlreadyOnHome) {
+        e.preventDefault();
+        window.location.reload();
+      }
+      return;
+    }
+
+    const cloverBtn = target.closest('.clover-btn');
+    if (cloverBtn) {
+      e.preventDefault();
+      triggerCloverSnow();
+    }
+  });
+
+  checkAutoStart();
+  document.addEventListener('astro:page-load', checkAutoStart);
+</script>
