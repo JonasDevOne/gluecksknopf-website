@@ -40,10 +40,10 @@ function formatTerminRange(start: Date, end?: Date): string {
           alt=""
         />
 
-        <div class="grid grid-cols-[12rem_1fr] gap-x-2 items-baseline flex-1">
-        <span class="font-bold">
-          {formatTerminRange(item.data.startDate, item.data.endDate)}
-        </span>
+        <div class="grid grid-cols-[12rem_1fr] md:grid-cols-[14rem_1fr] gap-x-1 items-center flex-1 text-base sm:text-lg md:text-xl">
+          <span class="font-bold">
+            {formatTerminRange(item.data.startDate, item.data.endDate)}
+          </span>
           <span>{item.data.description}</span>
         </div>
       </li>
