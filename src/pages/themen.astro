@@ -7,21 +7,25 @@ import { getCollection } from "astro:content";
 
 const themen = await getCollection('themeCollection');
 const images = await getCollection('imageCollection');
+const imageStacks = await getCollection('imageStackCollection');
 
-// Themen selbst nach ihrer Order sortieren
-themen.sort((a, b) => b.data.order - a.data.order);
+// Alle Galerie-Elemente (Einzelbilder und Bilderstapel) zusammenführen
+const allGalleryItems = [...images, ...imageStacks];
+
+// Themen selbst nach ihrer Order sortieren (höchste Order zuerst)
+themen.sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0));
 
 const navItems = themen.map((item) => ({
   title: item.data.title,
   href: `#${item.id}`,
 }));
 
-let globalImageCount = 0;
+let globalItemCount = 0;
 
 const themesWithImages = themen.map((thema) => {
-  // 1. Bilder des aktuellen Themas filtern und nach der neuen Logik sortieren
-  const themeImages = images
-    .filter((img) => img.data.theme === thema.data.title)
+  // Elemente des aktuellen Themas filtern und gemeinsam sortieren
+  const themeItems = allGalleryItems
+    .filter((item) => item.data.theme === thema.data.title)
     .sort((a, b) => {
       const orderA = a.data.order ?? 0;
       const orderB = b.data.order ?? 0;
@@ -31,31 +35,44 @@ const themesWithImages = themen.map((thema) => {
         return orderB - orderA;
       }
 
-      // Bei gleicher Order (z. B. beide 0) nach Datum sortieren (neuestes zuerst)
+      // Bei gleicher Order nach Datum sortieren (neuestes zuerst)
       return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
     });
 
-  const startIndex = globalImageCount;
-  globalImageCount += themeImages.length;
+  const startIndex = globalItemCount;
+  globalItemCount += themeItems.length;
 
   return {
     thema,
-    images: themeImages,
+    images: themeItems, // Enthält jetzt gemischt ImageCards und ImageStacks
     startIndex,
   };
 });
 
 // allModalImages übernimmt automatisch die sortierte Reihenfolge aus themesWithImages
 const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
-  images.map((img) => ({
-    title: img.data.title,
-    description: img.data.description,
-    themeTitle: thema.data.title,
-    themeId: thema.id,
-    img: img.data.coverImage,
-    order: img.data.order,
-    publishDate: img.data.publishDate,
-  }))
+  images.map((item) => {
+    // TypeScript verfeinert den Typen automatisch im jeweiligen Zweig:
+    if ("images" in item.data) {
+      // Ist ein Bilderstapel (ImageStack)
+      return {
+        title: item.data.title,
+        description: item.data.images[0]?.description,
+        themeTitle: thema.data.title,
+        themeId: thema.id,
+        img: item.data.images[0]?.img,
+      };
+    } else {
+      // Ist eine Einzelbild-Karte (ImageCard)
+      return {
+        title: item.data.title,
+        description: item.data.description,
+        themeTitle: thema.data.title,
+        themeId: thema.id,
+        img: item.data.coverImage,
+      };
+    }
+  })
 );
 ---
 
@@ -63,7 +80,7 @@ const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
   <SidebarNav items={navItems}>
     <div id="view-container" data-active-view="gallery" class="relative w-full h-full">
 
-      <div id="theme-gallery-view" class="w-full">
+      <div id="theme-gallery-view-wrapper" class="w-full">
         <ThemeGalleryView themenWithImages={themesWithImages} />
       </div>
 

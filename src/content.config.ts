@@ -53,4 +53,25 @@ const newsCollection = defineCollection({
   })
 });
 
-export const collections = { imageCollection, themeCollection, termineCollection, fragenCollection, newsCollection };
+const imageStackCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/bilderstapel/' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    theme: z.string(),
+    publishDate: z.coerce.date(),
+    order: z.number().default(0),
+    images: z.array(z.object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      img: image(),
+    })).min(1),
+  }),
+});
+
+export const collections = { imageCollection,
+  themeCollection,
+  termineCollection,
+  fragenCollection,
+  newsCollection,
+  imageStackCollection,
+};

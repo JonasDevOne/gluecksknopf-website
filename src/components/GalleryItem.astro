@@ -1,0 +1,20 @@
+---
+import ImageCard from "@/components/ImageCard.astro";
+import ImageStack from "@/components/ImageStack.astro";
+
+interface Props {
+  item: any;
+  isEager?: boolean;
+  globalIndex?: number;
+}
+
+const { item, isEager = false, globalIndex } = Astro.props;
+
+const isStack = Array.isArray(item.data.images);
+---
+
+{isStack ? (
+<ImageStack stack={item} isEager={isEager} globalIndex={globalIndex} />
+  ) : (
+<ImageCard image={item} isEager={isEager} globalIndex={globalIndex} />
+  )}

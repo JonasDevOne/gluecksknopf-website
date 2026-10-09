@@ -1,9 +1,9 @@
 ---
-import ImageCard from "@/components/ImageCard.astro";
+import GalleryItem from "@/components/GalleryItem.astro";
 
 interface Props {
   thema: any;
-  themeImages: any[];
+  themeImages: any[]; // Enthält gemischt Einzelbilder und Bilderstapel
   themeIndex: number;
   startIndex: number;
 }
@@ -42,9 +42,9 @@ const { thema, themeImages, themeIndex, startIndex } = Astro.props;
 
   {themeImages.length > 0 ? (
     <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
-      {themeImages.map((image, idx) => (
-        <ImageCard
-          image={image}
+      {themeImages.map((item, idx) => (
+        <GalleryItem
+          item={item}
           isEager={themeIndex === 0 && idx < 10}
           globalIndex={startIndex + idx}
         />
