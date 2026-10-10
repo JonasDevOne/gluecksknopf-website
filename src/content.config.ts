@@ -11,7 +11,8 @@ const imageCollection = defineCollection({
     publishDate: z.date(),
     order: z.number().default(0),
     hideInCarousel: z.boolean().default(false),
-    coverImage: image()
+    coverImage: image(),
+    hide: z.boolean().default(false),
   }),
 });
 
@@ -55,16 +56,15 @@ const newsCollection = defineCollection({
 
 const imageStackCollection = defineCollection({
   loader: glob({ pattern: '**/[^_]*.md', base: './src/content/bilderstapel/' }),
-  schema: ({ image }) => z.object({
+  schema: ({ }) => z.object({
     title: z.string(),
     theme: z.string(),
     publishDate: z.coerce.date(),
     order: z.number().default(0),
-    images: z.array(z.object({
-      title: z.string().optional(),
-      description: z.string().optional(),
-      img: image(),
-    })).min(1),
+    images: z.union([
+      z.string().transform((val) => val.split(',').map((s) => s.trim()).filter(Boolean)),
+      z.array(z.string()),
+    ]),
   }),
 });
 

@@ -1,4 +1,5 @@
 ---
+// src/components/ImageStack.astro
 import { Image } from "astro:assets";
 
 interface Props {
@@ -8,15 +9,18 @@ interface Props {
 }
 
 const { stack, isEager = false, globalIndex } = Astro.props;
-const coverImage = stack.data.images[0]?.img;
-const imageCount = stack.data.images.length;
+
+// Nimmt die aufgelösten Bild-Objekte
+const stackImages = stack.resolvedImages || [];
+const coverImage = stackImages[0]?.data.coverImage;
+const imageCount = stackImages.length;
 ---
 
 <div
   class="gallery-image-stack group/card relative aspect-video cursor-pointer select-none"
   data-global-index={globalIndex}
 >
-  <!-- Hintere Stapel-Ebenen (Stack Layers) -->
+  <!-- Hintere Stapel-Ebenen -->
   <div class="absolute inset-0 translate-x-1.5 -translate-y-1.5 rounded-xl bg-slate-800 border border-slate-700/50 transition-transform duration-300 group-hover/card:translate-x-2.5 group-hover/card:-translate-y-2.5 opacity-60"></div>
   <div class="absolute inset-0 translate-x-0.75 -translate-y-0.75 rounded-xl bg-slate-900 border border-slate-700/50 transition-transform duration-300 group-hover/card:translate-x-1.25 group-hover/card:-translate-y-1.25 opacity-80"></div>
 
@@ -31,7 +35,7 @@ const imageCount = stack.data.images.length;
       />
     )}
 
-    <!-- Stapel-Indikator (Badge) -->
+    <!-- Stapel-Badge mit Anzahl -->
     <div class="absolute top-2 right-2 z-10 flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-xs border border-white/10 shadow-sm">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
         <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7z" />
@@ -41,7 +45,7 @@ const imageCount = stack.data.images.length;
       <span>{imageCount}</span>
     </div>
 
-    <!-- Hover-Overlay für den Titel -->
+    <!-- Titel-Overlay -->
     <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none flex items-end p-2.5">
       <p class="text-xs font-medium text-white line-clamp-1 drop-shadow-sm">
         {stack.data.title}

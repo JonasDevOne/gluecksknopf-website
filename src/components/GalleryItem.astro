@@ -1,4 +1,5 @@
 ---
+// src/components/GalleryItem.astro
 import ImageCard from "@/components/ImageCard.astro";
 import ImageStack from "@/components/ImageStack.astro";
 
@@ -9,8 +10,7 @@ interface Props {
 }
 
 const { item, isEager = false, globalIndex } = Astro.props;
-
-const isStack = Array.isArray(item.data.images);
+const isStack = "resolvedImages" in item;
 ---
 
 {isStack ? (

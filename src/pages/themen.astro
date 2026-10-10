@@ -1,4 +1,5 @@
 ---
+// src/pages/themen.astro
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SidebarNav from "@/components/SidebarNav.astro";
 import ThemeGalleryView from "@/components/themen/ThemeGalleryView.astro";
@@ -6,13 +7,39 @@ import ThemeModalView from "@/components/themen/ThemeModalView.astro";
 import { getCollection } from "astro:content";
 
 const themen = await getCollection('themeCollection');
-const images = await getCollection('imageCollection');
+const allImages = await getCollection('imageCollection');
 const imageStacks = await getCollection('imageStackCollection');
 
-// Alle Galerie-Elemente (Einzelbilder und Bilderstapel) zusammenführen
-const allGalleryItems = [...images, ...imageStacks];
+// 1. Alle Bild-IDs ermitteln, die in IRGENDEINEM Stapel vorkommen
+const idsInStacks = new Set(
+  imageStacks.flatMap((stack) => stack.data.images)
+);
 
-// Themen selbst nach ihrer Order sortieren (höchste Order zuerst)
+// 2. Einzelbilder filtern: Nur anzeigen, wenn hideStandalone: false UND nicht Teil eines Stapels
+const standaloneImages = allImages.filter((img) => {
+  const isExplicitlyHidden = img.data.hide === true;
+  const isUsedInStack = idsInStacks.has(img.id) || idsInStacks.has(img.id.replace(/\.md$/, ''));
+  return !isExplicitlyHidden && !isUsedInStack;
+});
+
+// 3. Stacks mit den echten Image-Objekten aus allImages verknüpfen
+const resolvedStacks = imageStacks.map((stack) => {
+  const stackImageObjects = stack.data.images
+    .map((imgInStack) =>
+      allImages.find((img) => img.data.title === imgInStack)
+    )
+    .filter((img): img is NonNullable<typeof img> => img !== undefined);
+
+  return {
+    ...stack,
+    resolvedImages: stackImageObjects, // Enthält jetzt die vollständigen Bild-Objekte aus bilderDefinition
+  };
+});
+
+// 4. Standalone-Bilder und aufgelöste Stacks zusammenführen
+const allGalleryItems = [...standaloneImages, ...resolvedStacks];
+
+// Themen sortieren
 themen.sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0));
 
 const navItems = themen.map((item) => ({
@@ -23,19 +50,15 @@ const navItems = themen.map((item) => ({
 let globalItemCount = 0;
 
 const themesWithImages = themen.map((thema) => {
-  // Elemente des aktuellen Themas filtern und gemeinsam sortieren
   const themeItems = allGalleryItems
     .filter((item) => item.data.theme === thema.data.title)
     .sort((a, b) => {
       const orderA = a.data.order ?? 0;
       const orderB = b.data.order ?? 0;
 
-      // Zuerst nach 'order' sortieren (höchste Zahl zuerst)
       if (orderA !== orderB) {
         return orderB - orderA;
       }
-
-      // Bei gleicher Order nach Datum sortieren (neuestes zuerst)
       return b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
     });
 
@@ -44,48 +67,47 @@ const themesWithImages = themen.map((thema) => {
 
   return {
     thema,
-    images: themeItems, // Enthält jetzt gemischt ImageCards und ImageStacks
+    images: themeItems,
     startIndex,
   };
 });
 
-// allModalImages übernimmt automatisch die sortierte Reihenfolge aus themesWithImages
+// Modal-Vorbereitung (greift sicher auf das Cover-Bild zu)
 const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
-  images.map((item) => {
-    // TypeScript verfeinert den Typen automatisch im jeweiligen Zweig:
-    if ("images" in item.data) {
-      // Ist ein Bilderstapel (ImageStack)
+  images
+    .map((item) => {
+      const isStack = "resolvedImages" in item;
+      const coverImg = isStack
+        ? item.resolvedImages[0]?.data.coverImage
+        : item.data.coverImage;
+
+      if (!coverImg) return null; // Falls kein Bild zugewiesen/gefunden werden konnte
+
+      const description = isStack
+        ? item.resolvedImages[0]?.data.description
+        : item.data.description;
+
       return {
         title: item.data.title,
-        description: item.data.images[0]?.description,
+        description,
         themeTitle: thema.data.title,
         themeId: thema.id,
-        img: item.data.images[0]?.img,
+        img: coverImg,
+        order: item.data.order,
+        publishDate: item.data.publishDate,
       };
-    } else {
-      // Ist eine Einzelbild-Karte (ImageCard)
-      return {
-        title: item.data.title,
-        description: item.data.description,
-        themeTitle: thema.data.title,
-        themeId: thema.id,
-        img: item.data.coverImage,
-      };
-    }
-  })
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null)
 );
 ---
 
 <BaseLayout>
   <SidebarNav items={navItems}>
     <div id="view-container" data-active-view="gallery" class="relative w-full h-full">
-
       <div id="theme-gallery-view-wrapper" class="w-full">
         <ThemeGalleryView themenWithImages={themesWithImages} />
       </div>
-
       <ThemeModalView allImages={allModalImages} />
-
     </div>
   </SidebarNav>
 </BaseLayout>
