@@ -1,0 +1,95 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  image: any;
+  title?: string;
+  description?: string;
+  themeTitle?: string;
+  themeId?: string;
+  isStack?: boolean;
+  stackCount?: number;
+  stackData?: any;
+}
+
+const {
+  image,
+  title,
+  description,
+  themeTitle,
+  themeId,
+  isStack = false,
+  stackCount = 0,
+  stackData = null,
+} = Astro.props;
+---
+
+<div
+  class="swiper-slide flex! flex-col xl:flex-row items-center justify-center gap-4 xl:gap-8 h-full w-full min-w-0 min-h-0 overflow-hidden p-1 sm:p-2"
+  data-theme-id={themeId}
+  data-theme-title={themeTitle}
+  data-image-title={title}
+>
+  <!-- 16:9 Image Card Container -->
+  <div class="relative flex-1 w-full h-full max-h-full min-w-0 min-h-0 flex items-center justify-center overflow-hidden">
+    <div
+      class={`relative aspect-video w-full xl:w-auto h-auto xl:h-full max-h-full max-w-full flex items-center justify-center bg-black rounded-xl overflow-hidden shadow-md border border-slate-200 ${isStack ? 'gallery-image-stack cursor-pointer group/card' : ''}`}
+      data-stack-data={isStack && stackData ? JSON.stringify(stackData) : undefined}
+    >
+      {isStack && (
+        <>
+          <!-- Optische Stapel-Ebenen -->
+          <div class="absolute inset-0 translate-x-1.5 -translate-y-1.5 rounded-xl bg-slate-800 border border-slate-700/50 opacity-60 pointer-events-none"></div>
+          <div class="absolute inset-0 translate-x-0.75 -translate-y-0.75 rounded-xl bg-slate-900 border border-slate-700/50 opacity-80 pointer-events-none"></div>
+
+          <!-- Stapel-Badge mit Bilderanzahl -->
+          <div class="absolute top-2 right-2 z-20 flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-xs border border-white/10 shadow-sm pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7z" />
+              <path d="M4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" />
+              <path fill-rule="evenodd" d="M2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4zm2 0h12v4H4v-4z" clip-rule="evenodd" />
+            </svg>
+            <span>{stackCount}</span>
+          </div>
+        </>
+      )}
+
+      <!-- Verschwommener Hintergrund -->
+      {image && (
+        <Image
+          src={image}
+          alt=""
+          class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 pointer-events-none select-none scale-125"
+        />
+      )}
+
+      <!-- Hauptbild -->
+      {image && (
+        <Image
+          src={image}
+          alt={title || themeTitle || "Galerie Bild"}
+          class="relative z-10 w-full h-full object-contain pointer-events-none select-none transition-transform duration-300 group-hover/card:scale-105"
+        />
+      )}
+    </div>
+  </div>
+
+  <!-- Titel & Bildbeschreibung -->
+  <div class="w-full xl:w-80 xl:max-w-md shrink xl:min-w-48 flex flex-col justify-center text-left py-2 px-1 xl:px-3 max-h-[40%] xl:max-h-full overflow-y-auto">
+    {themeTitle && (
+      <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+        {themeTitle} {isStack && "• Bilderstapel"}
+      </span>
+    )}
+
+    <h3 class="text-lg xl:text-2xl font-bold text-slate-800 line-clamp-2">
+      {title || themeTitle}
+    </h3>
+
+    {description && (
+      <p class="text-sm xl:text-base text-slate-600 mt-2 line-clamp-3 sm:line-clamp-4 xl:line-clamp-8">
+        {description}
+      </p>
+    )}
+  </div>
+</div>

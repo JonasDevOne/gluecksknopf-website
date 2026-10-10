@@ -10,15 +10,30 @@ interface Props {
 
 const { stack, isEager = false, globalIndex } = Astro.props;
 
-// Nimmt die aufgelösten Bild-Objekte
 const stackImages = stack.resolvedImages || [];
 const coverImage = stackImages[0]?.data.coverImage;
 const imageCount = stackImages.length;
+
+// Vorbereiten der Bilddaten (Extrahiert sicher die URL-String-Eigenschaft)
+const stackData = {
+  title: stack.data.title,
+  themeTitle: stack.data.theme,
+  images: stackImages.map((img: any) => {
+    const rawCover = img.data.coverImage;
+    const src = typeof rawCover === "string" ? rawCover : rawCover?.src || "";
+    return {
+      title: img.data.title || "",
+      description: img.data.description || "",
+      src: src,
+    };
+  }),
+};
 ---
 
 <div
   class="gallery-image-stack group/card relative aspect-video cursor-pointer select-none"
   data-global-index={globalIndex}
+  data-stack-data={JSON.stringify(stackData)}
 >
   <!-- Hintere Stapel-Ebenen -->
   <div class="absolute inset-0 translate-x-1.5 -translate-y-1.5 rounded-xl bg-slate-800 border border-slate-700/50 transition-transform duration-300 group-hover/card:translate-x-2.5 group-hover/card:-translate-y-2.5 opacity-60"></div>
@@ -35,7 +50,7 @@ const imageCount = stackImages.length;
       />
     )}
 
-    <!-- Stapel-Badge mit Anzahl -->
+    <!-- Stapel-Badge -->
     <div class="absolute top-2 right-2 z-10 flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-xs border border-white/10 shadow-sm">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
         <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7z" />

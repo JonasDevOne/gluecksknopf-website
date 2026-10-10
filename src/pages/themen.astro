@@ -1,5 +1,6 @@
 ---
 // src/pages/themen.astro
+import StackModalView from "@/components/themen/StackModalView.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SidebarNav from "@/components/SidebarNav.astro";
 import ThemeGalleryView from "@/components/themen/ThemeGalleryView.astro";
@@ -74,40 +75,61 @@ const themesWithImages = themen.map((thema) => {
 
 // Modal-Vorbereitung (greift sicher auf das Cover-Bild zu)
 const allModalImages = themesWithImages.flatMap(({ thema, images }) =>
-  images
-    .map((item) => {
-      const isStack = "resolvedImages" in item;
-      const coverImg = isStack
-        ? item.resolvedImages[0]?.data.coverImage
-        : item.data.coverImage;
+  images.map((item) => {
+    const isStack = "resolvedImages" in item;
+    const stackImages = isStack ? item.resolvedImages : [];
 
-      if (!coverImg) return null; // Falls kein Bild zugewiesen/gefunden werden konnte
+    const coverImg = isStack
+      ? stackImages[0]?.data.coverImage
+      : item.data.coverImage;
 
-      const description = isStack
-        ? item.resolvedImages[0]?.data.description
-        : item.data.description;
+    const description = isStack
+      ? stackImages[0]?.data.description
+      : item.data.description;
 
-      return {
+    const stackData = isStack
+      ? {
         title: item.data.title,
-        description,
         themeTitle: thema.data.title,
-        themeId: thema.id,
-        img: coverImg,
-        order: item.data.order,
-        publishDate: item.data.publishDate,
-      };
-    })
-    .filter((item): item is NonNullable<typeof item> => item !== null)
+        images: stackImages.map((img: any) => ({
+          title: img.data.title || "",
+          description: img.data.description || "",
+          src: typeof img.data.coverImage === "string" ? img.data.coverImage : img.data.coverImage?.src || "",
+        })),
+      }
+      : null;
+
+    return {
+      title: item.data.title,
+      description,
+      themeTitle: thema.data.title,
+      themeId: thema.id,
+      img: coverImg,
+      order: item.data.order,
+      publishDate: item.data.publishDate,
+      isStack,
+      stackCount: isStack ? stackImages.length : 0,
+      stackData,
+    };
+  })
 );
 ---
 
 <BaseLayout>
   <SidebarNav items={navItems}>
     <div id="view-container" data-active-view="gallery" class="relative w-full h-full">
+
+      <!-- Galerie-Grid -->
       <div id="theme-gallery-view-wrapper" class="w-full">
         <ThemeGalleryView themenWithImages={themesWithImages} />
       </div>
+
+      <!-- Galerie-Modal für Einzelbilder -->
       <ThemeModalView allImages={allModalImages} />
+
+      <!-- Stapel-Modal für Bilderstapel -->
+      <StackModalView />
+
     </div>
   </SidebarNav>
 </BaseLayout>

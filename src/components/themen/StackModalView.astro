@@ -1,0 +1,202 @@
+---
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
+import 'swiper/css/free-mode';
+import ModalWrapper from "./ModalWrapper.astro";
+---
+
+<ModalWrapper id="stack-modal" closeBtnId="stack-modal-close-btn" ariaLabel="Bilderstapel Modal">
+  <!-- Hauptbereich -->
+  <div class="w-full flex-1 min-h-0 flex items-center justify-between gap-2 sm:gap-4 py-4 sm:py-6">
+    <div class="shrink-0 flex items-center justify-center w-8 sm:w-10 h-full">
+      <div id="stack-prev-btn" class="swiper-button-prev static! top-auto! left-auto! right-auto! mt-0! text-slate-700! hover:text-accent! after:text-lg! sm:after:text-xl! cursor-pointer"></div>
+    </div>
+
+    <div id="stack-main-swiper" class="swiper main-swiper flex-1 min-w-0 h-full relative select-none">
+      <div class="swiper-wrapper" id="stack-swiper-wrapper">
+        <!-- Dynamisch via JavaScript befüllt -->
+      </div>
+    </div>
+
+    <div class="shrink-0 flex items-center justify-center w-8 sm:w-10 h-full">
+      <div id="stack-next-btn" class="swiper-button-next static! top-auto! left-auto! right-auto! mt-0! text-slate-700! hover:text-accent! after:text-lg! sm:after:text-xl! cursor-pointer"></div>
+    </div>
+  </div>
+
+  <!-- Thumbs-Bereich -->
+  <div class="w-full shrink-0 flex items-center justify-between gap-2 sm:gap-4 pb-3 sm:pb-5">
+    <div class="shrink-0 w-8 sm:w-10"></div>
+    <div class="flex-1 min-w-0 flex flex-col xl:flex-row gap-4 xl:gap-8 items-center">
+      <div class="w-full xl:flex-1 min-w-0 flex items-center overflow-hidden">
+        <div id="stack-thumbs-swiper" class="swiper thumbs-swiper w-full h-16 sm:h-20 select-none">
+          <div class="swiper-wrapper items-center" id="stack-thumbs-wrapper">
+            <!-- Dynamisch via JavaScript befüllt -->
+          </div>
+        </div>
+      </div>
+      <div class="hidden xl:block xl:w-80 xl:max-w-md xl:min-w-48 shrink pointer-events-none"></div>
+    </div>
+    <div class="shrink-0 w-8 sm:w-10"></div>
+  </div>
+</ModalWrapper>
+
+<style>
+  #stack-thumbs-swiper .swiper-slide {
+    opacity: 0.4;
+  }
+  #stack-thumbs-swiper .swiper-slide:hover {
+    opacity: 0.75;
+  }
+  #stack-thumbs-swiper .swiper-slide-thumb-active {
+    opacity: 1 !important;
+    border-color: var(--color-accent, #3b82f6) !important;
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Thumbs, FreeMode } from 'swiper/modules';
+
+  function initStackModal() {
+    const modal = document.getElementById('stack-modal');
+    const closeBtn = document.getElementById('stack-modal-close-btn');
+    const mainSwiperEl = document.getElementById('stack-main-swiper');
+    const thumbsSwiperEl = document.getElementById('stack-thumbs-swiper');
+    const prevBtn = document.getElementById('stack-prev-btn');
+    const nextBtn = document.getElementById('stack-next-btn');
+    const mainWrapper = document.getElementById('stack-swiper-wrapper');
+    const thumbsWrapper = document.getElementById('stack-thumbs-wrapper');
+
+    if (!modal || !mainSwiperEl || !thumbsSwiperEl || !mainWrapper || !thumbsWrapper) {
+      return;
+    }
+
+    let thumbsSwiper: Swiper | null = null;
+    let mainSwiper: Swiper | null = null;
+    let openedFromThemeModal = false; // <-- Merkt sich den Ursprung
+
+    function ensureSwipersInitialized() {
+      if (!thumbsSwiper) {
+        thumbsSwiper = new Swiper(thumbsSwiperEl!, {
+          modules: [FreeMode],
+          slidesPerView: 'auto',
+          spaceBetween: 12,
+          centeredSlides: true,
+          slideToClickedSlide: true,
+          watchSlidesProgress: true,
+        });
+      }
+
+      if (!mainSwiper) {
+        mainSwiper = new Swiper(mainSwiperEl!, {
+          modules: [Navigation, Thumbs],
+          spaceBetween: 20,
+          navigation: {
+            nextEl: nextBtn,
+            prevEl: prevBtn,
+          },
+          thumbs: { swiper: thumbsSwiper },
+        });
+      }
+    }
+
+    function openStackModal(data: {
+      title: string;
+      themeTitle: string;
+      images: Array<{ title?: string; description?: string; src: string }>;
+    }) {
+      if (!data.images || data.images.length === 0) return;
+
+      mainWrapper!.innerHTML = data.images.map((img) => `
+        <div class="swiper-slide flex! flex-col xl:flex-row items-center justify-center gap-4 xl:gap-8 h-full w-full min-w-0 min-h-0 overflow-hidden p-1 sm:p-2">
+          <div class="relative flex-1 w-full h-full max-h-full min-w-0 min-h-0 flex items-center justify-center overflow-hidden">
+            <div class="relative aspect-video w-full xl:w-auto h-auto xl:h-full max-h-full max-w-full flex items-center justify-center bg-black rounded-xl overflow-hidden shadow-md border border-slate-200">
+              <img src="${img.src}" alt="" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 pointer-events-none select-none scale-125" />
+              <img src="${img.src}" alt="${img.title || data.title}" class="relative z-10 w-full h-full object-contain pointer-events-none select-none" />
+            </div>
+          </div>
+          <div class="w-full xl:w-80 xl:max-w-md shrink xl:min-w-48 flex flex-col justify-center text-left py-2 px-1 xl:px-3 max-h-[40%] xl:max-h-full overflow-y-auto">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">${data.themeTitle} (${data.title})</span>
+            <h3 class="text-lg xl:text-2xl font-bold text-slate-800 line-clamp-2">${img.title || data.title}</h3>
+            ${img.description ? `<p class="text-sm xl:text-base text-slate-600 mt-2 line-clamp-3 sm:line-clamp-4 xl:line-clamp-8">${img.description}</p>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      thumbsWrapper!.innerHTML = data.images.map((img) => `
+        <div class="swiper-slide w-16! sm:w-20! h-12! sm:h-16! cursor-pointer rounded-xl overflow-hidden shrink-0 border-2 border-transparent transition-all duration-200 shadow-xs">
+          <img src="${img.src}" alt="${img.title || 'Vorschau'}" class="h-full w-full object-cover cursor-pointer select-none" />
+        </div>
+      `).join('');
+
+      ensureSwipersInitialized();
+      mainSwiper!.update();
+      thumbsSwiper!.update();
+
+      const galleryWrapper = document.getElementById('theme-gallery-view-wrapper') || document.getElementById('theme-gallery-view');
+      const themeModal = document.getElementById('theme-modal');
+
+      // Prüfen, ob das ThemeModal gerade offen ist
+      openedFromThemeModal = themeModal ? themeModal.style.display !== 'none' : false;
+
+      if (openedFromThemeModal) {
+        // ThemeModal ausblenden
+        if (themeModal) themeModal.style.display = 'none';
+      } else {
+        // Galerie ausblenden
+        if (galleryWrapper) galleryWrapper.style.display = 'none';
+      }
+
+      modal!.style.display = 'flex';
+      modal!.setAttribute('aria-hidden', 'false');
+
+      mainSwiper!.slideTo(0, 0);
+      thumbsSwiper!.slideTo(0, 0);
+    }
+
+    function closeStackModal() {
+      modal!.style.display = 'none';
+      modal!.setAttribute('aria-hidden', 'true');
+
+      const galleryWrapper = document.getElementById('theme-gallery-view-wrapper') || document.getElementById('theme-gallery-view');
+      const themeModal = document.getElementById('theme-modal');
+
+      if (openedFromThemeModal) {
+        // Zurück zum ThemeModal an der alten Position
+        if (themeModal) themeModal.style.display = 'flex';
+      } else {
+        // Zurück zur Galerie
+        if (galleryWrapper) galleryWrapper.style.display = '';
+      }
+
+      openedFromThemeModal = false;
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const stackEl = target.closest('.gallery-image-stack') as HTMLElement;
+
+      if (stackEl && stackEl.dataset.stackData) {
+        try {
+          const stackData = JSON.parse(stackEl.dataset.stackData);
+          openStackModal(stackData);
+        } catch (err) {
+          console.error("Fehler beim Parsen der Stack-Daten:", err);
+        }
+      }
+    });
+
+    closeBtn?.addEventListener('click', closeStackModal);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal!.style.display !== 'none') {
+        closeStackModal();
+      }
+    });
+  }
+
+  initStackModal();
+  document.addEventListener('astro:page-load', initStackModal);
+</script>
