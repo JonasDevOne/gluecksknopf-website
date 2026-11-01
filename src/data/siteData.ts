@@ -4,7 +4,7 @@ export const baseData = {
   about:
 "🍀Kreativität ist für mich mehr als ein Hobby – sie ist eine Herzensangelegenheit!🍀 "+
 "Ich bin Mitte 40, verheiratet, Mama von zwei Kindern und hauptberuflich als Erzieherin in einer Krippe tätig. "+
-"Kreativität begleitet mich eigentlich schon mein ganzes Leben. Ob Nähen, Plotten, Sublimieren, Gestalten oder Experimentieren mit den unterschiedlichsten Materialien – ich liebe es, neue Ideen auszuprobieren und aus kleinen Einfällen etwas Besonderes entstehen zu lassen. "+
+"Kreativität begleitet mich eigentlich schon mein ganzes Leben. Ob Nähen, Plotten, Sublimieren, Gestalten oder Experimentieren mit den unterschiedlichsten Materialien wie Holz, Filz, Stoff oder Wolle – ich liebe es, neue Ideen auszuprobieren und aus kleinen Einfällen etwas Besonderes entstehen zu lassen. "+
 "Eine ganz besondere Liebe gehört dabei dem Papier. Aus bunten Papieren, Stempeln, Stanzen und vielen kleinen Details entstehen mit viel Liebe zum Detail individuelle Karten, Geschenkideen und kleine Besonderheiten, die Freude schenken sollen. "+
 "Und genau das ist es, was mich antreibt: Anderen eine Freude zu machen! Das Leuchten in den Augen zu sehen ist meine größte Belohnung. "+
 "Meine Werke entstehen nicht einfach von der Stange. Jedes Stück wird individuell gestaltet und auf die Wünsche und Vorstellungen meiner Kunden abgestimmt. Denn ich finde, gerade die kleinen persönlichen Details machen etwas Selbstgemachtes so besonders."+
