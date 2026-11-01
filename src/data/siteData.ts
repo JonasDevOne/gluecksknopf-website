@@ -8,7 +8,7 @@ export const baseData = {
 "Eine ganz besondere Liebe gehört dabei dem Papier. Aus bunten Papieren, Stempeln, Stanzen und vielen kleinen Details entstehen mit viel Liebe zum Detail individuelle Karten, Geschenkideen und kleine Besonderheiten, die Freude schenken sollen. "+
 "Und genau das ist es, was mich antreibt: Anderen eine Freude zu machen! Das Leuchten in den Augen zu sehen ist meine größte Belohnung. "+
 "Meine Werke entstehen nicht einfach von der Stange. Jedes Stück wird individuell gestaltet und auf die Wünsche und Vorstellungen meiner Kunden abgestimmt. Denn ich finde, gerade die kleinen persönlichen Details machen etwas Selbstgemachtes so besonders."+
-"Wenn ich gerade nicht kreativ bin, findet man mich vielleicht mit einem guten Buch, bei Musik, oder auf der Yogamatte. Wobei … die nächste Bastelidee ist meistens nicht weit entfernt 😉 "+
+"Wenn ich gerade nicht kreativ bin, findet man mich vielleicht mit einem guten Buch, bei Musik, oder auf der Yogamatte. Wobei … die nächste Idee ist meistens nicht weit entfernt. "+
 "🍀Kreativität macht gemeinsam noch mehr Spaß!🍀 "+
 "Deshalb öffne ich mehrmals im Jahr die Türen meines kleinen Kreatikellers für gemütliche Basteltreffen. Außerdem gibt es hin und wieder Workshops zu verschiedenen Themen. Die aktuellen Termine findest du unter *Termine*. Wenn du einen bestimmten Workshop-Wunsch hast oder gerne einmal in geselliger Runde kreativ werden möchtest, sprich mich einfach an! "+
 "Du möchtest dich mit dem Plotten beschäftigen oder hast gerade erst damit angefangen? Auch dabei unterstütze ich dich gerne. Ob kleine Starthilfe, Tipps zur Bedienung oder Unterstützung im Silhouette-Programm – gemeinsam bekommen wir das hin! "+
